@@ -7,8 +7,13 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -17,7 +22,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Table(name = "utenti")
 @JsonIgnoreProperties({"password"})
-public class Utente {
+public class Utente implements UserDetails {
     @Id
     @GeneratedValue
     @Setter(AccessLevel.NONE)
@@ -47,5 +52,10 @@ public class Utente {
         this.dataRegistrazione = dataRegistrazione;
         this.dataNascita = dataNascita;
         this.tipo = tipo;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(tipo.getTipo()));
     }
 }
