@@ -1,9 +1,9 @@
 package federicopini.jammee.DTOs.utente;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import federicopini.jammee.validation.Phone;
+import jakarta.validation.constraints.*;
+
+import java.time.LocalDate;
 
 public record UtenteDTO (
         @NotBlank(message = "Username obbligatorio!")
@@ -20,7 +20,12 @@ public record UtenteDTO (
         @Size(min = 6, message = "La password deve avere almeno 6 caratteri")
         @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{6,}$\n", message = "La password deve avere: \n •Almeno una lettera maiuscola \n •Lunghezza di almeno 6 caratteri")//PASSWORD CON ALMENO UNA LETTERA MAIUSCOLA E UN NUMERO
         String password,
-        @
+        @Phone
+        String telefono,
+        @Past(message = "La data di nascita deve essere nel passato") // TODO: Validare solo le persone maggiorenni
+        LocalDate dataNascita,
+        @NotBlank(message = "Il tipo non può essere vuoto!")
+        String tipo
 )
 {
 }

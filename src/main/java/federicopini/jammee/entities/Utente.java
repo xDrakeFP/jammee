@@ -42,14 +42,14 @@ public class Utente implements UserDetails {
     @JoinColumn(name = "tipo_id")
     private TipoUtente tipo;
 
-    public Utente(String username, String nome, String cognome, String email, String password, String telefono, LocalDate dataRegistrazione, LocalDate dataNascita, TipoUtente tipo) {
+    public Utente(String username, String nome, String cognome, String email, String password, String telefono, LocalDate dataNascita, TipoUtente tipo) {
         this.username = username;
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
         this.password = password;
         this.telefono = telefono;
-        this.dataRegistrazione = dataRegistrazione;
+        this.dataRegistrazione = LocalDate.now();
         this.dataNascita = dataNascita;
         this.tipo = tipo;
     }
