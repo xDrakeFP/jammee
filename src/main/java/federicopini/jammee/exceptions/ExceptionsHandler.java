@@ -4,6 +4,7 @@ import ch.qos.logback.core.status.ErrorStatus;
 import federicopini.jammee.DTOs.errors.ErrorsDTO;
 import federicopini.jammee.DTOs.errors.ErrorsListDTO;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -32,6 +33,12 @@ public class ExceptionsHandler extends RuntimeException {
     @ExceptionHandler(AlreadyExistingException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorsDTO handleAlreadyExisting(AlreadyExistingException ex){
+        return new ErrorsDTO(ex.getMessage(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorsDTO handleDenied(AuthorizationDeniedException ex){
         return new ErrorsDTO(ex.getMessage(), LocalDateTime.now());
     }
 }

@@ -1,5 +1,6 @@
 package federicopini.jammee.controllers;
 
+import federicopini.jammee.DTOs.utente.UpdatedTipoUtenteDTO;
 import federicopini.jammee.DTOs.utente.UpdatedUtenteDTO;
 import federicopini.jammee.entities.Utente;
 import federicopini.jammee.services.UtenteService;
@@ -55,6 +56,12 @@ public class UtenteController {
     @DeleteMapping("/me")
     public void deleteMe(@AuthenticationPrincipal Utente utenteLoggato){
         this.service.deleteUser(utenteLoggato.getId());
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PatchMapping("/type/{id}")
+    public Utente updateUserType(@PathVariable UUID id, @RequestBody UpdatedTipoUtenteDTO body){
+        return this.service.updateTipoUtente(id,body);
     }
 
 }
