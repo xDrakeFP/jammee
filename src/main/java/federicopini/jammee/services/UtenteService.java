@@ -1,16 +1,23 @@
 package federicopini.jammee.services;
 
+import federicopini.jammee.DTOs.utente.UpdatedUtenteDTO;
 import federicopini.jammee.DTOs.utente.UtenteDTO;
 import federicopini.jammee.entities.Utente;
 import federicopini.jammee.entities.types.TipoUtente;
 import federicopini.jammee.exceptions.AlreadyExistingException;
+import federicopini.jammee.exceptions.BadRequestException;
 import federicopini.jammee.exceptions.NotFoundException;
 import federicopini.jammee.repos.UtenteRepo;
 import federicopini.jammee.repos.types.TipoUtenteRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
@@ -43,5 +50,30 @@ public class UtenteService {
         TipoUtente found = this.tipoRepo.findByTipo(body.tipo()).orElseThrow(()-> new NotFoundException("Tipo non valido"));
         Utente utente = new Utente(body.username(), body.nome(), body.cognome(), body.email(), bcrypt.encode(body.password()), body.telefono(), body.dataNascita(),found);
     return this.repo.save(utente);
+    }
+
+    public Utente updateUser(UUID id, UpdatedUtenteDTO body){
+        if(this.repo.existsByUsername(body.username())) throw new AlreadyExistingException("Username già in uso!");
+        Utente found = this.findById(id);
+        if(body.username() != null) found.setUsername(body.username());
+        if(body.nome() != null) found.setNome(body.nome());
+        if(body.cognome() != null) found.setCognome(body.cognome());
+       if(body.dataNascita()!=null) {
+         if(body.dataNascita().isAfter(LocalDate.now())) throw new BadRequestException("La data di nascita non può essere nel futuro");
+         found.setDataNascita(body.dataNascita());
+       }
+
+        return this.repo.save(found);
+    }
+
+    public Page<Utente> getAll(int pageNumber, int pageSize, String sortBy){
+        if (pageSize > 30) pageSize = 30;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
+        return this.repo.findAll(pageable);
+    }
+
+    public void deleteUser(UUID id){
+        Utente found = this.findById(id);
+        this.repo.delete(found);
     }
 }

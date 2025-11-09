@@ -2,6 +2,7 @@ package federicopini.jammee.services;
 
 import federicopini.jammee.DTOs.auth.LoginDTO;
 import federicopini.jammee.entities.Utente;
+import federicopini.jammee.exceptions.UnauthorizedException;
 import federicopini.jammee.security.JWTTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +18,13 @@ public class AuthService {
     private PasswordEncoder bcrypt;
 
     public String checkCredentialsAndGenerateToken(LoginDTO body){
+        Utente found = this.service.findByEmail(body.email());
 
+        if(bcrypt.matches(body.password(), found.getPassword()))
+        {
+            return tools.createToken(found);
+        } else {
+            throw new UnauthorizedException("Credenziali errate!");
+        }
     }
 }

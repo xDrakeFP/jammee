@@ -18,7 +18,7 @@ public record UtenteDTO (
         @Email(message = "L'email deve essere inserita nel formato corretto")
         String email,
         @Size(min = 6, message = "La password deve avere almeno 6 caratteri")
-        @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{6,}$\n", message = "La password deve avere: \n •Almeno una lettera maiuscola \n •Lunghezza di almeno 6 caratteri")//PASSWORD CON ALMENO UNA LETTERA MAIUSCOLA E UN NUMERO
+        @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{6,}$", message = "La password deve avere almeno una lettera maiuscola e un numero")
         String password,
         @Phone
         String telefono,
