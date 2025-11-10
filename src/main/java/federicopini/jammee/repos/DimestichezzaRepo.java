@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface DimestichezzaRepo extends JpaRepository<Dimestichezza, UUID> {
+   boolean existsByMusicistaIdAndGenereId(UUID musicistaId, UUID genereId);
 }

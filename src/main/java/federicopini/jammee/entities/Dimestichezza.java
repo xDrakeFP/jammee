@@ -20,9 +20,11 @@ public class Dimestichezza {
     private UUID id;
     @ManyToOne
     @JoinColumn(name = "musicista_id")
+    @Setter(AccessLevel.NONE)
     private Musicista musicista;
     @ManyToOne
     @JoinColumn(name = "genere_id")
+    @Setter(AccessLevel.NONE)
     private Genere genere;
     @Column(name = "dimestichezza")
     private int voto;

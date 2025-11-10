@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -30,7 +31,7 @@ public class Musicista {
 
     public Musicista(Utente utente, String avatar, String bio, String posizione, String indirizzo, boolean canHost) {
         this.utente = utente;
-        this.avatar = avatar;
+        this.avatar = Objects.requireNonNullElseGet(avatar, () -> "https://ui-avatars.com/api/?name=" + utente.getNome() + "+" + utente.getCognome());
         this.bio = bio;
         this.posizione = posizione;
         this.indirizzo = indirizzo;

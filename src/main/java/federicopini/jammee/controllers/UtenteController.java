@@ -4,7 +4,6 @@ import federicopini.jammee.DTOs.utente.UpdatedTipoUtenteDTO;
 import federicopini.jammee.DTOs.utente.UpdatedUtenteDTO;
 import federicopini.jammee.entities.Utente;
 import federicopini.jammee.services.UtenteService;
-import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
