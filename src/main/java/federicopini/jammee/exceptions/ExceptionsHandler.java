@@ -1,6 +1,5 @@
 package federicopini.jammee.exceptions;
 
-import ch.qos.logback.core.status.ErrorStatus;
 import federicopini.jammee.DTOs.errors.ErrorsDTO;
 import federicopini.jammee.DTOs.errors.ErrorsListDTO;
 import org.springframework.http.HttpStatus;
