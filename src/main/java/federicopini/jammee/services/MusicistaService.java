@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -45,17 +46,16 @@ public class MusicistaService {
 
     public Musicista updateMusicista(UUID id, MusicistaDTO body){
         Musicista found = this.findByUtenteId(id);
-        if(body.avatar() != null) found.setAvatar(body.avatar());
-        if(body.bio() != null) found.setBio(body.bio());
-        if(body.posizione() != null) found.setPosizione(body.posizione());
-        if(body.indirizzo() != null) found.setIndirizzo(body.indirizzo());
-        found.setCanHost(body.canHost());
+        if(!Objects.equals(body.avatar(), found.getAvatar())) found.setAvatar(body.avatar());
+        if(!Objects.equals(body.bio(), found.getBio())) found.setBio(body.bio());
+        if(!Objects.equals(body.posizione(), found.getPosizione())) found.setPosizione(body.posizione());
+        if(!Objects.equals(body.indirizzo(), found.getIndirizzo())) found.setIndirizzo(body.indirizzo());
+        if(body.canHost()!=found.isCanHost()) found.setCanHost(body.canHost());
         return this.repo.save(found);
     }
 
     public void deleteMusicista(UUID id)
     {
-        Musicista found = this.findById(id);
-        this.repo.delete(found);
+        this.repo.delete(this.findById(id));
     }
 }

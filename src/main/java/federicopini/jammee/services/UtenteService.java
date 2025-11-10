@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -57,10 +58,10 @@ public class UtenteService {
     public Utente updateUser(UUID id, UpdatedUtenteDTO body){
         if(this.repo.existsByUsername(body.username())) throw new AlreadyExistingException("Username già in uso!");
         Utente found = this.findById(id);
-        if(body.username() != null) found.setUsername(body.username());
-        if(body.nome() != null) found.setNome(body.nome());
-        if(body.cognome() != null) found.setCognome(body.cognome());
-       if(body.dataNascita()!=null) {
+        if(!Objects.equals(body.username(), found.getUsername())) found.setUsername(body.username());
+        if(!Objects.equals(body.nome(), found.getNome())) found.setNome(body.nome());
+        if(!Objects.equals(body.cognome(), found.getCognome())) found.setCognome(body.cognome());
+       if(body.dataNascita()!=found.getDataNascita()) {
          if(body.dataNascita().isAfter(LocalDate.now())) throw new BadRequestException("La data di nascita non può essere nel futuro");
          found.setDataNascita(body.dataNascita());
        }

@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -38,23 +39,31 @@ public class DimestichezzaService {
     return this.repo.findAll(pageable);
     }
 
-    public Dimestichezza addDimestichezza(DimestichezzaDTO body){
-        if(this.repo.existsByMusicistaIdAndGenereId(body.musicistaID(),body.genereID())) throw new AlreadyExistingException("Ci sono già i dati sulla dimestichezza per questa combinazione Musicista/Genere");
-        Musicista musicistaFound = this.musicistaService.findById(body.musicistaID());
+    public Page<Dimestichezza> getMine(int pageNumber, int pageSize, String sortBy, UUID utenteId){
+        Musicista found = this.musicistaService.findByUtenteId(utenteId);
+        Pageable pageable = PageRequest.of(pageNumber,pageSize,Sort.by(sortBy).ascending());
+        return repo.findByMusicistaId(found.getId(),pageable);
+    }
+
+    public Dimestichezza addDimestichezza(DimestichezzaDTO body, UUID utenteId){
+        Musicista musicistaFound = this.musicistaService.findByUtenteId(utenteId);
+        if(this.repo.existsByMusicistaIdAndGenereId(musicistaFound.getId(),body.genereID())) throw new AlreadyExistingException("Ci sono già i dati sulla dimestichezza per questa combinazione Musicista/Genere");
         Genere genereFound = this.genereService.findById(body.genereID());
         Dimestichezza newDimestichezza = new Dimestichezza(musicistaFound,genereFound, body.voto(), body.note());
         return this.repo.save(newDimestichezza);
     }
 
-    public Dimestichezza updateDimestichezza(UUID id, UpdatedDimestichezzaDTO body){
-        Dimestichezza found = this.findById(id);
-        found.setVoto(body.voto());
-        found.setNote(body.note());
-        return this.repo.save(found);
+    public Dimestichezza updateDimestichezza(UpdatedDimestichezzaDTO body, UUID utenteId){
+        Musicista musicistaFound = this.musicistaService.findByUtenteId(utenteId);
+        Dimestichezza dimestichezzaFound = this.repo.findByMusicistaIdAndGenereId(musicistaFound.getId(),body.genereId()).orElseThrow(()-> new NotFoundException("Non hai nessuna dimestichezza registrata per questo genere"));
+        if(body.voto()!= dimestichezzaFound.getVoto()) dimestichezzaFound.setVoto(body.voto());
+        if(!Objects.equals(body.note(), dimestichezzaFound.getNote())) dimestichezzaFound.setNote(body.note());
+        return this.repo.save(dimestichezzaFound);
     }
 
-    public void deleteDimestichezza(UUID id){
-        Dimestichezza found = this.findById(id);
+    public void deleteDimestichezza(UUID genereId,UUID utenteId){
+        Musicista musicistaFound = this.musicistaService.findByUtenteId(utenteId);
+        Dimestichezza found = this.repo.findByMusicistaIdAndGenereId(musicistaFound.getId(),genereId).orElseThrow(()-> new NotFoundException("Non hai nessuna dimestichezza registrata per questo genere"));
         this.repo.delete(found);
     }
 

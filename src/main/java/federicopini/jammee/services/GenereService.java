@@ -1,8 +1,7 @@
 package federicopini.jammee.services;
 
-import federicopini.jammee.DTOs.generi.GenereDTO;
+import federicopini.jammee.DTOs.genere.GenereDTO;
 import federicopini.jammee.entities.Genere;
-import federicopini.jammee.entities.Utente;
 import federicopini.jammee.exceptions.AlreadyExistingException;
 import federicopini.jammee.exceptions.NotFoundException;
 import federicopini.jammee.repos.GenereRepo;
@@ -13,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -34,6 +34,12 @@ public class GenereService {
         if(this.repo.existsByGenere(body.genere())) throw new AlreadyExistingException("Il genere esista già a database");
         Genere newGenere = new Genere(body.genere());
         return this.repo.save(newGenere);
+    }
+
+    public Genere updateGenere(UUID id, GenereDTO body){
+        Genere found = this.findById(id);
+        if(!Objects.equals(body.genere(), found.getGenere())) found.setGenere(body.genere());
+        return this.repo.save(found);
     }
 
     public void deleteGenere(UUID id){

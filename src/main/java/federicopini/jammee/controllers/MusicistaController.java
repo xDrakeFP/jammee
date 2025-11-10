@@ -60,10 +60,9 @@ public class MusicistaController {
     }
 
     @DeleteMapping("/me")
-    public void deleteMe(@AuthenticationPrincipal Utente utenteLoggato){
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMe(@AuthenticationPrincipal Utente utenteLoggato) {
         this.service.deleteMusicista(utenteLoggato.getId());
     }
-
-
 
 }
