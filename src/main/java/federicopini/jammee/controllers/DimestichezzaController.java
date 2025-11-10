@@ -24,6 +24,11 @@ public class DimestichezzaController {
     @Autowired
     private DimestichezzaService service;
 
+    @GetMapping("/{id}")
+    public Dimestichezza findById(UUID id){
+        return this.service.findById(id);
+    }
+
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public Dimestichezza create(@RequestBody @Validated DimestichezzaDTO body, @AuthenticationPrincipal Utente utenteLoggato, BindingResult validationResult){
@@ -31,9 +36,15 @@ public class DimestichezzaController {
         return this.service.addDimestichezza(body, utenteLoggato.getId());
     }
 
+    @GetMapping("/{userId}")
+    public Page<Dimestichezza> getByUserId(@PathVariable UUID id,@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "id") String sortBy)
+    {
+        return this.service.getByUserId(pageNumber,pageSize,sortBy,id);
+    }
+
     @GetMapping("/me")
-    public Page<Dimestichezza> getMine(@AuthenticationPrincipal Utente utenteLoggato,@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "nome") String sortBy){
-        return this.service.getMine(pageNumber,pageSize,sortBy,utenteLoggato.getId());
+    public Page<Dimestichezza> getMine(@AuthenticationPrincipal Utente utenteLoggato,@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "id") String sortBy){
+        return this.service.getByUserId(pageNumber,pageSize,sortBy,utenteLoggato.getId());
     }
 
     @PatchMapping("/update")

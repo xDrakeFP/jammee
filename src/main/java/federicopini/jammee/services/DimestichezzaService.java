@@ -39,7 +39,7 @@ public class DimestichezzaService {
     return this.repo.findAll(pageable);
     }
 
-    public Page<Dimestichezza> getMine(int pageNumber, int pageSize, String sortBy, UUID utenteId){
+    public Page<Dimestichezza> getByUserId(int pageNumber, int pageSize, String sortBy, UUID utenteId){
         Musicista found = this.musicistaService.findByUtenteId(utenteId);
         Pageable pageable = PageRequest.of(pageNumber,pageSize,Sort.by(sortBy).ascending());
         return repo.findByMusicistaId(found.getId(),pageable);
@@ -55,7 +55,7 @@ public class DimestichezzaService {
 
     public Dimestichezza updateDimestichezza(UpdatedDimestichezzaDTO body, UUID utenteId){
         Musicista musicistaFound = this.musicistaService.findByUtenteId(utenteId);
-        Dimestichezza dimestichezzaFound = this.repo.findByMusicistaIdAndGenereId(musicistaFound.getId(),body.genereId()).orElseThrow(()-> new NotFoundException("Non hai nessuna dimestichezza registrata per questo genere"));
+        Dimestichezza dimestichezzaFound = this.repo.findByMusicistaIdAndGenereId(musicistaFound.getId(),body.genereId()).orElseThrow(()-> new NotFoundException("Nessuna dimestichezza registrata per questo genere dall'utente indicato"));
         if(body.voto()!= dimestichezzaFound.getVoto()) dimestichezzaFound.setVoto(body.voto());
         if(!Objects.equals(body.note(), dimestichezzaFound.getNote())) dimestichezzaFound.setNote(body.note());
         return this.repo.save(dimestichezzaFound);
@@ -63,7 +63,7 @@ public class DimestichezzaService {
 
     public void deleteDimestichezza(UUID genereId,UUID utenteId){
         Musicista musicistaFound = this.musicistaService.findByUtenteId(utenteId);
-        Dimestichezza found = this.repo.findByMusicistaIdAndGenereId(musicistaFound.getId(),genereId).orElseThrow(()-> new NotFoundException("Non hai nessuna dimestichezza registrata per questo genere"));
+        Dimestichezza found = this.repo.findByMusicistaIdAndGenereId(musicistaFound.getId(),genereId).orElseThrow(()-> new NotFoundException("Nessuna dimestichezza registrata per questo genere dall'utente indicato"));
         this.repo.delete(found);
     }
 
