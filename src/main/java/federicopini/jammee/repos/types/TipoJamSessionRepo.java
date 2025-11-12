@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface TipoJamSessionRepo extends JpaRepository<TipoJamSession, UUID> {
     boolean existsByTipo(String tipo);
+    Optional<TipoJamSession> findByTipo(String tipo);
 }

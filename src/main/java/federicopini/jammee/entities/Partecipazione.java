@@ -26,6 +26,8 @@ public class Partecipazione {
     @JoinColumn(name = "jam_session_id")
     private JamSession jamSession;
 
+    private boolean confermata;
+
     public Partecipazione(Musicista musicista, JamSession jamSession) {
         this.musicista = musicista;
         this.jamSession = jamSession;

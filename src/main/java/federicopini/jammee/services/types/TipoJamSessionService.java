@@ -26,6 +26,10 @@ public class TipoJamSessionService {
         return this.repo.findById(id).orElseThrow(()-> new NotFoundException("Tipo Jam Session con id "+id+" non trovato"));
     }
 
+    public TipoJamSession findByTipo(String tipo){
+        return this.repo.findByTipo(tipo).orElseThrow(()-> new NotFoundException("Tipo non trovato, indicare un tipo corretto"));
+    }
+
     public Page<TipoJamSession> getAll(int pageNumber, int pageSize, String sortBy){
         if (pageSize > 30) pageSize = 30;
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());

@@ -1,14 +1,21 @@
 package federicopini.jammee.controllers;
 
+import federicopini.jammee.DTOs.status.StatoJamSessionDTO;
 import federicopini.jammee.DTOs.types.TipoJamSessionDTO;
 import federicopini.jammee.entities.Dimestichezza;
+import federicopini.jammee.entities.JamSession;
+import federicopini.jammee.entities.Utente;
+import federicopini.jammee.entities.status.StatoJamSession;
 import federicopini.jammee.entities.types.TipoJamSession;
 import federicopini.jammee.exceptions.ValidationException;
+import federicopini.jammee.services.JamSessionService;
+import federicopini.jammee.services.status.StatoJamSessionService;
 import federicopini.jammee.services.types.TipoJamSessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +27,21 @@ import java.util.UUID;
 public class JamSessionController {
 
     @Autowired
+    private JamSessionService service;
+
+    @Autowired
     private TipoJamSessionService tipoJamSessionService;
+
+    @Autowired
+    private StatoJamSessionService statoJamSessionService;
+
+    @GetMapping("/{id}")
+    public JamSession findById(@PathVariable UUID id){
+        return this.service.findById(id);
+    }
+
+    @PostMapping("/create")
+    public JamSession
 
     @GetMapping("/types")
     public Page<TipoJamSession> getByUserId(@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "id") String sortBy)
@@ -45,6 +66,31 @@ public class JamSessionController {
     @DeleteMapping("/type/delete/{id}")
     public void deleteTypeJam(@PathVariable UUID id){
         this.tipoJamSessionService.delete(id);
+    }
+
+    @GetMapping("/statuses")
+    public Page<StatoJamSession> getAll(int pageNumber, int pageSize, String sortBy){
+        return this.statoJamSessionService.getAll(pageNumber,pageSize,sortBy);
+    }
+
+    @PostMapping("/status/create")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public StatoJamSession addNewStatusType(@RequestBody @Validated StatoJamSessionDTO body,BindingResult validationResult){
+        if(validationResult.hasErrors()) throw new ValidationException(validationResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList());
+        return this.statoJamSessionService.add(body);
+    }
+
+    @PatchMapping("/status/edit/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public StatoJamSession editStatusType(@PathVariable UUID id,@RequestBody @Validated StatoJamSessionDTO body, BindingResult validationResult){
+        if(validationResult.hasErrors()) throw new ValidationException(validationResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList());
+        return this.statoJamSessionService.edit(id,body);
+    }
+
+    @DeleteMapping("/status/delete/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public void deleteStatusType(@PathVariable UUID id){
+        this.statoJamSessionService.delete(id);
     }
 
 }

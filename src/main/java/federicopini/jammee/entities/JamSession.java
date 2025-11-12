@@ -28,6 +28,8 @@ public class JamSession {
     private String indirizzo;
     private String note;
 
+    @ManyToOne
+    private Musicista creatore;
 
     @ManyToOne
     @JoinColumn(name = "tipo_id")
@@ -37,12 +39,13 @@ public class JamSession {
     @JoinColumn(name = "stato_id")
     private StatoJamSession stato;
 
-    public JamSession(LocalDate data, String posizione, String indirizzo, String note, TipoJamSession tipo, StatoJamSession stato) {
+    public JamSession(LocalDate data, String posizione, String indirizzo, String note,Musicista creatore, TipoJamSession tipo, StatoJamSession stato) {
         this.data = data;
         this.posizione = posizione;
         this.indirizzo = indirizzo;
         this.note = note;
         this.tipo = tipo;
         this.stato = stato;
+        this.creatore = creatore;
     }
 }

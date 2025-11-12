@@ -22,4 +22,8 @@ public class StatoJamSession {
     @Setter(AccessLevel.NONE)
     private UUID id;
     private String stato;
+
+    public StatoJamSession(String stato) {
+        this.stato = stato;
+    }
 }
