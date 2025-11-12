@@ -22,4 +22,8 @@ public class TipoJamSession {
     @Setter(AccessLevel.NONE)
     private UUID id;
     private String tipo;
+
+    public TipoJamSession(String tipo) {
+        this.tipo = tipo;
+    }
 }
