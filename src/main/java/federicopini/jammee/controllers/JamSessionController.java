@@ -1,5 +1,7 @@
 package federicopini.jammee.controllers;
 
+import federicopini.jammee.DTOs.JamSession.JamSessionDTO;
+import federicopini.jammee.DTOs.JamSession.UpdatedJamSessionDTO;
 import federicopini.jammee.DTOs.status.StatoJamSessionDTO;
 import federicopini.jammee.DTOs.types.TipoJamSessionDTO;
 import federicopini.jammee.entities.Dimestichezza;
@@ -41,7 +43,27 @@ public class JamSessionController {
     }
 
     @PostMapping("/create")
-    public JamSession
+    public JamSession createJamSession(@AuthenticationPrincipal @Validated Utente utente, @RequestBody JamSessionDTO body, BindingResult validationResult){
+        if(validationResult.hasErrors()) throw new ValidationException(validationResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList());
+        return this.service.createJamSession(utente.getId(),body);
+    }
+
+    @PatchMapping("/update/{id}")
+    public JamSession updateJamSession(@PathVariable UUID id, @RequestBody @Validated UpdatedJamSessionDTO body,@AuthenticationPrincipal Utente utente, BindingResult validationResult)
+    {
+        if(validationResult.hasErrors()) throw new ValidationException(validationResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList());
+        return this.service.updateJamSession(id,body,utente.getId());
+    }
+
+    @PatchMapping("/status/{id}")
+    public JamSession updateStatusJamSession(@PathVariable UUID id,@RequestBody @Validated StatoJamSessionDTO body ,@AuthenticationPrincipal Utente utente){
+        return this.service.updateStatus(id,body,utente.getId());
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public void deleteJamSession(@PathVariable UUID id,@AuthenticationPrincipal Utente utente){
+        this.service.deleteJamSession(id, utente.getId());
+    }
 
     @GetMapping("/types")
     public Page<TipoJamSession> getByUserId(@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "id") String sortBy)

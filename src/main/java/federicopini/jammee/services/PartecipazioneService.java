@@ -1,13 +1,11 @@
 package federicopini.jammee.services;
 
 import federicopini.jammee.DTOs.partecipazione.PartecipazioneDTO;
-import federicopini.jammee.entities.JamSession;
-import federicopini.jammee.entities.Musicista;
-import federicopini.jammee.entities.Partecipazione;
-import federicopini.jammee.entities.Strumento;
+import federicopini.jammee.entities.*;
 import federicopini.jammee.exceptions.AlreadyExistingException;
 import federicopini.jammee.exceptions.BadRequestException;
 import federicopini.jammee.exceptions.NotFoundException;
+import federicopini.jammee.exceptions.UnauthorizedException;
 import federicopini.jammee.repos.PartecipazioneRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,9 +32,9 @@ public class PartecipazioneService {
         return this.repo.findById(id).orElseThrow(()-> new NotFoundException("Partecipazione non trovata con ID indicato"));
     }
 
-    public Partecipazione addPartecipazione(PartecipazioneDTO body){
-        if(this.repo.existsByMusicistaIdAndJamSessionId(body.musicistaId(),body.jamSessionId())) throw new AlreadyExistingException("Esiste gia una partecipazione per questo utente a questa Jam");
-        Musicista foundMusicista = this.musicistaService.findById(body.musicistaId());
+    public Partecipazione addPartecipazione(PartecipazioneDTO body, Utente utente){
+        Musicista foundMusicista = this.musicistaService.findByUtenteId(utente.getId());
+        if(this.repo.existsByMusicistaIdAndJamSessionId(foundMusicista.getId(),body.jamSessionId())) throw new AlreadyExistingException("Esiste gia una partecipazione per questo utente a questa Jam");
         JamSession foundJamSession = this.jamSessionService.findById(body.jamSessionId());
         Partecipazione newPartecipazione = new Partecipazione(foundMusicista,foundJamSession);
         return this.repo.save(newPartecipazione);
@@ -49,22 +47,29 @@ public class PartecipazioneService {
         return this.repo.findByMusicistaId(found.getId(),pageable);
     }
 
-    public Partecipazione confirmPartecipazione(UUID id){
+    public Partecipazione confirmPartecipazione(UUID id,Utente utente){
+        Musicista foundMusicista = this.musicistaService.findByUtenteId(id);
         Partecipazione found = this.findById(id);
+        if(foundMusicista.getId()!= found.getJamSession().getCreatore().getId()) throw new UnauthorizedException("Non sei autorizzato a modificare Jam Session che non hai creato");
+
         if(found.isConfermata()) throw new BadRequestException("Partecipazione già confermata");
         found.setConfermata(true);
         return this.repo.save(found);
     }
 
-    public Partecipazione undoPartecipazione(UUID id){
+    public Partecipazione undoPartecipazione(UUID id,Utente utente){
+        Musicista foundMusicista = this.musicistaService.findByUtenteId(utente.getId());
         Partecipazione found = this.findById(id);
-        if(!found.isConfermata()) throw new BadRequestException("Partecipazione non ancora confermata, impossibile annullare la conferma");
+        if(foundMusicista.getId()!= found.getJamSession().getCreatore().getId()) throw new UnauthorizedException("Non sei autorizzato a modificare Jam Session che non hai creato");
+        if(!found.isConfermata()) throw new BadRequestException("Partecipazione non ancora confermata");
         found.setConfermata(false);
         return this.repo.save(found);
     }
 
-    public void deletePartecipazione(UUID id){
+    public void deletePartecipazione(UUID id, Utente utente){
+        Musicista foundMusicista = this.musicistaService.findByUtenteId(utente.getId());
         Partecipazione found = this.findById(id);
+        if(foundMusicista.getId()!= found.getJamSession().getCreatore().getId()) throw new UnauthorizedException("Non sei autorizzato a eliminare Jam Session che non hai creato");
         this.repo.delete(found);
     }
 
