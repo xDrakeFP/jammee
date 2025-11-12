@@ -9,6 +9,7 @@ import java.util.UUID;
 public record UpdatedDimestichezzaDTO(
         @NotNull
         UUID genereId,
+        @NotNull
         @Min(value = 0)
         @Max(value = 5)
         int voto,

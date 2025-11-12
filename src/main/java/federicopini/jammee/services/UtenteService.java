@@ -1,6 +1,6 @@
 package federicopini.jammee.services;
 
-import federicopini.jammee.DTOs.utente.UpdatedTipoUtenteDTO;
+import federicopini.jammee.DTOs.types.TipoUtenteDTO;
 import federicopini.jammee.DTOs.utente.UpdatedUtenteDTO;
 import federicopini.jammee.DTOs.utente.UtenteDTO;
 import federicopini.jammee.entities.Utente;
@@ -9,7 +9,6 @@ import federicopini.jammee.exceptions.AlreadyExistingException;
 import federicopini.jammee.exceptions.BadRequestException;
 import federicopini.jammee.exceptions.NotFoundException;
 import federicopini.jammee.repos.UtenteRepo;
-import federicopini.jammee.repos.types.TipoUtenteRepo;
 import federicopini.jammee.services.types.TipoUtenteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -80,7 +79,7 @@ public class UtenteService {
         this.repo.delete(found);
     }
 
-    public Utente updateTipoUtente(UUID id, UpdatedTipoUtenteDTO body){
+    public Utente updateTipoUtente(UUID id, TipoUtenteDTO body){
         TipoUtente tipoFound = this.tipoService.findByTipo(body.tipo());
         Utente found = this.findById(id);
         found.setTipo(tipoFound);

@@ -47,8 +47,8 @@ public class DimestichezzaService {
 
     public Dimestichezza addDimestichezza(DimestichezzaDTO body, UUID utenteId){
         Musicista musicistaFound = this.musicistaService.findByUtenteId(utenteId);
-        if(this.repo.existsByMusicistaIdAndGenereId(musicistaFound.getId(),body.genereID())) throw new AlreadyExistingException("Ci sono già i dati sulla dimestichezza per questa combinazione Musicista/Genere");
-        Genere genereFound = this.genereService.findById(body.genereID());
+        if(this.repo.existsByMusicistaIdAndGenereId(musicistaFound.getId(),body.genereId())) throw new AlreadyExistingException("Ci sono già i dati sulla dimestichezza per questa combinazione Musicista/Genere");
+        Genere genereFound = this.genereService.findById(body.genereId());
         Dimestichezza newDimestichezza = new Dimestichezza(musicistaFound,genereFound, body.voto(), body.note());
         return this.repo.save(newDimestichezza);
     }

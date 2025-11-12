@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record DimestichezzaDTO (
-        @NotNull UUID genereID,
+        @NotNull UUID genereId,
         @NotNull
         @Min(value = 0)
         @Max(value = 5)

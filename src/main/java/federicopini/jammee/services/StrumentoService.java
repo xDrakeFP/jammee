@@ -1,6 +1,7 @@
 package federicopini.jammee.services;
 
 import federicopini.jammee.DTOs.strumento.StrumentoDTO;
+import federicopini.jammee.DTOs.types.TipoStrumentoDTO;
 import federicopini.jammee.entities.Strumento;
 import federicopini.jammee.entities.types.TipoStrumento;
 import federicopini.jammee.exceptions.AlreadyExistingException;
@@ -34,6 +35,13 @@ public class StrumentoService {
         if (pageSize > 30) pageSize = 30;
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
         return this.repo.findAll(pageable);
+    }
+
+    public Page<Strumento> getByType(TipoStrumentoDTO body,int pageNumber, int pageSize, String sortBy){
+        TipoStrumento found = this.tipoService.findByTipo(body.tipo());
+        if (pageSize > 30) pageSize = 30;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
+        return this.repo.findByTipoId(found.getId(),pageable);
     }
 
     public Strumento createStrumento(StrumentoDTO body){
