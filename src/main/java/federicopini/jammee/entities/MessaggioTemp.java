@@ -10,34 +10,35 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "feedbacks")
-public class Feedback {
+@NoArgsConstructor
+public class MessaggioTemp {
+
     @Id
-    @GeneratedValue
     @Setter(AccessLevel.NONE)
+    @GeneratedValue
     private UUID id;
 
-    @Column(name = "valutazione")
-    private int voto;
-
-    private String note;
-
     @ManyToOne
+    @JoinColumn(name = "mittente_id")
     private Musicista mittente;
 
     @ManyToOne
+    @JoinColumn(name = "destinatario_id")
     private Musicista destinatario;
+
+    private String contenuto;
+
+    private boolean letto;
 
     private Instant timestamp;
 
-    public Feedback(int voto, String note, Musicista mittente, Musicista destinatario) {
-        this.voto = voto;
-        this.note = note;
+    public MessaggioTemp(Musicista mittente, Musicista destinatario, String contenuto) {
         this.mittente = mittente;
         this.destinatario = destinatario;
+        this.contenuto = contenuto;
+        this.letto = false;
         this.timestamp = Instant.now();
     }
 }

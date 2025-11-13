@@ -91,7 +91,7 @@ public class JamSessionController {
     }
 
     @GetMapping("/statuses")
-    public Page<StatoJamSession> getAll(int pageNumber, int pageSize, String sortBy){
+    public Page<StatoJamSession> getAll(@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "id") String sortBy){
         return this.statoJamSessionService.getAll(pageNumber,pageSize,sortBy);
     }
 

@@ -1,6 +1,7 @@
 package federicopini.jammee.controllers;
 
 import federicopini.jammee.DTOs.partecipazione.PartecipazioneDTO;
+import federicopini.jammee.DTOs.partecipazione.PartecipazioneJamSessionDTO;
 import federicopini.jammee.entities.Partecipazione;
 import federicopini.jammee.entities.Strumento;
 import federicopini.jammee.entities.Utente;
@@ -50,8 +51,13 @@ public class PartecipazioneController {
         this.service.deletePartecipazione(id,utente);
     }
 
-    @GetMapping("/by-user-id")
-    public Page<Partecipazione> getByUserId(@AuthenticationPrincipal Utente utente,@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "id") String sortBy){
+    @GetMapping("/me")
+    public Page<Partecipazione> getMineParticipation(@AuthenticationPrincipal Utente utente,@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "id") String sortBy){
         return this.service.getByMusicistaId(utente.getId(),pageNumber,pageSize,sortBy);
+    }
+
+    @GetMapping("/by-jam-session/{id}")
+    public Page<Partecipazione> getByJamSessionId(@PathVariable UUID id, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "id") String sortBy){
+        return this.service.getByJamSessionId(id,pageNumber,pageSize,sortBy);
     }
 }

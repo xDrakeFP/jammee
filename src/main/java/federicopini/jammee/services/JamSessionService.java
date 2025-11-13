@@ -43,14 +43,18 @@ public class JamSessionService {
     private UtenteService utenteService;
 
     public JamSession createJamSession(UUID id, JamSessionDTO body) {
-        Musicista autore = this.musicistaService.findById(id);
+        Musicista autore = this.musicistaService.findByUtenteId(id);
         TipoJamSession found = this.tipoJamSessionService.findByTipo(body.tipo());
         StatoJamSession programmata = this.statoJamSessionService.findByStato("PROGRAMMATA");
+
         JamSession newJamSession = new JamSession(body.data(), body.posizione(), body.indirizzo(), body.note(), autore,found, programmata);
-        PartecipazioneDTO bodyPartecipazione = new PartecipazioneDTO(newJamSession.getId());
+
+        JamSession savedJamSession = this.repo.save(newJamSession);
+
+        PartecipazioneDTO bodyPartecipazione = new PartecipazioneDTO(savedJamSession.getId());
         Partecipazione partecipazioneAutore = this.partecipazioneService.addPartecipazione(bodyPartecipazione,this.utenteService.findById(id));
         this.partecipazioneService.confirmPartecipazione(partecipazioneAutore.getId(),this.utenteService.findById(id));
-        return this.repo.save(newJamSession);
+        return savedJamSession;
     }
 
     public JamSession findById(UUID id){

@@ -9,5 +9,6 @@ import java.util.UUID;
 
 public interface PartecipazioneRepo extends JpaRepository<Partecipazione, UUID> {
     Page<Partecipazione> findByMusicistaId(UUID id, Pageable pageable);
+    Page<Partecipazione> findByJamSessionId(UUID id, Pageable pageable);
     boolean existsByMusicistaIdAndJamSessionId(UUID musicistaId,UUID jamSessionId);
 }
