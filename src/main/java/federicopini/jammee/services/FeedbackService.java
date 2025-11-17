@@ -5,6 +5,7 @@ import federicopini.jammee.DTOs.feedback.UpdatedFeedbackDTO;
 import federicopini.jammee.entities.Feedback;
 import federicopini.jammee.entities.Musicista;
 import federicopini.jammee.entities.Utente;
+import federicopini.jammee.exceptions.BadRequestException;
 import federicopini.jammee.exceptions.NotFoundException;
 import federicopini.jammee.exceptions.UnauthorizedException;
 import federicopini.jammee.repos.FeedbackRepo;
@@ -32,15 +33,17 @@ public class FeedbackService {
     }
 
     public Feedback createFeedback(Utente utente, FeedbackDTO body){
-        Musicista musicistaLoggato = this.musicistaService.findById(utente.getId());
-        Musicista destinatario = this.musicistaService.findById(body.destinatarioId());
+        Musicista musicistaLoggato = this.musicistaService.findByUtenteId(utente.getId());
+        Musicista destinatario = this.musicistaService.findById(UUID.fromString(body.destinatarioId()));
+        if(this.repo.existsByDestinatarioIdAndMittenteId(destinatario.getId(),musicistaLoggato.getId())) throw new BadRequestException("Esiste gia un tuo feedback per questo utente");
+        if(musicistaLoggato == destinatario) throw new BadRequestException("Non è possibile lasciare feedback a se stessi");
         Feedback feedback = new Feedback(body.voto(), body.note(), musicistaLoggato,destinatario);
         return this.repo.save(feedback);
     }
 
     public Feedback updateFeedback(Utente utente, UUID id, UpdatedFeedbackDTO body){
         Feedback found = this.findById(id);
-        Musicista musicistaLoggato = this.musicistaService.findByUtenteId(id);
+        Musicista musicistaLoggato = this.musicistaService.findByUtenteId(utente.getId());
         if(musicistaLoggato.getId()!= found.getMittente().getId()) throw new UnauthorizedException("Non puoi modificare feedback lasciati da altri utenti");
         if(found.getVoto() != body.voto()) found.setVoto(body.voto());
         if(!Objects.equals(found.getNote(), body.note())) found.setNote(body.note());
@@ -49,7 +52,7 @@ public class FeedbackService {
 
     public void deleteFeedback(Utente utente,UUID id){
         Feedback found = this.findById(id);
-        Musicista musicistaLoggato = this.musicistaService.findByUtenteId(id);
+        Musicista musicistaLoggato = this.musicistaService.findByUtenteId(utente.getId());
         if(musicistaLoggato.getId()!= found.getMittente().getId()) throw new UnauthorizedException("Non puoi cancellare feedback lasciati da altri utenti");
         this.repo.delete(found);
     }

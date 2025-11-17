@@ -14,6 +14,6 @@ public record FeedbackDTO(
         int voto,
         String note,
         @NotBlank(message = "Il feedback deve avere un destinatario")
-        UUID destinatarioId
+        String destinatarioId
 ) {
 }

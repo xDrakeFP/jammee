@@ -4,6 +4,7 @@ import federicopini.jammee.DTOs.chat.MessaggioTempDTO;
 import federicopini.jammee.entities.MessaggioTemp;
 import federicopini.jammee.entities.Musicista;
 import federicopini.jammee.entities.Utente;
+import federicopini.jammee.exceptions.BadRequestException;
 import federicopini.jammee.exceptions.NotFoundException;
 import federicopini.jammee.exceptions.UnauthorizedException;
 import federicopini.jammee.repos.MessaggioTempRepo;
@@ -26,8 +27,9 @@ public class MessaggioTempService {
     }
 
     public MessaggioTemp create(UUID id,MessaggioTempDTO body){
-        Musicista destinatario = this.musicistaService.findById(body.destinatarioId());
+        Musicista destinatario = this.musicistaService.findById(UUID.fromString(body.destinatarioId()));
         Musicista mittente = this.musicistaService.findByUtenteId(id);
+        if(destinatario == mittente) throw new BadRequestException("Non puoi mandarti messaggi da solo");
         MessaggioTemp newMessaggioTemp = new MessaggioTemp(mittente,destinatario, body.contenuto());
         return this.repo.save(newMessaggioTemp);
     }
@@ -37,5 +39,11 @@ public class MessaggioTempService {
         MessaggioTemp found = this.findById(id);
         if(foundMusicista.getId()!=found.getMittente().getId()) throw new UnauthorizedException("Non sei autorizzato a cancellare messaggi mandati da qualcun'altro");
         this.repo.delete(found);
+    }
+
+    public MessaggioTemp read( UUID id){
+        MessaggioTemp found = this.findById(id);
+        found.setLetto(!found.isLetto());
+        return this.repo.save(found);
     }
 }

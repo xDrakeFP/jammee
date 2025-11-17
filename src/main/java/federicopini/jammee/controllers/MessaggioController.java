@@ -35,4 +35,10 @@ public class MessaggioController {
     public void deleteMessaggio(@AuthenticationPrincipal Utente utente, @PathVariable UUID id){
         this.messaggioTempService.delete(utente,id);
     }
+
+    @PatchMapping("/read/{id}")
+    public MessaggioTemp readMessaggio(@PathVariable UUID id){
+        return this.messaggioTempService.read(id);
+    }
+
 }
