@@ -2,12 +2,64 @@ import "./App.css";
 import Topbar from "./assets/components/layout/TopBar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { useSelector } from "react-redux";
+import { selectIsAuthenticated } from "./store/slices/authSlice";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+import AuthLayout from "./assets/components/layout/AuthLayout";
+import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/LoginPage";
+import MainLayout from "./assets/components/layout/MainLayout";
 
 function App() {
+    const isAuthenticated = useSelector(selectIsAuthenticated);
+
     return (
-        <>
-            <Topbar></Topbar>
-        </>
+        <BrowserRouter>
+            {isAuthenticated && <Topbar />}
+            <Routes>
+                {!isAuthenticated ? (
+                    <>
+                        <Route
+                            path="/login"
+                            element={
+                                <AuthLayout>
+                                    <RegisterPage />
+                                </AuthLayout>
+                            }
+                        />
+                        <Route
+                            path="/register"
+                            element={
+                                <AuthLayout>
+                                    <LoginPage />
+                                </AuthLayout>
+                            }
+                        />
+                        <Route path="*" element={<Navigate to="/login" replace />} />
+                    </>
+                ) : (
+                    <>
+                        <Route path="/" element={<Navigate to="/home" replace />} />
+                        <Route
+                            path="*"
+                            element={
+                                <MainLayout>
+                                    <div>Pagina non trovata</div>
+                                </MainLayout>
+                            }
+                        />
+                        <Route
+                            path="/home"
+                            element={
+                                <MainLayout>
+                                    <HomePage />
+                                </MainLayout>
+                            }
+                        />
+                    </>
+                )}
+            </Routes>
+        </BrowserRouter>
     );
 }
 
