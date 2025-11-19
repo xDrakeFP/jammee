@@ -23,9 +23,7 @@ public record UtenteDTO (
         @Phone
         String telefono,
         @Past(message = "La data di nascita deve essere nel passato") // TODO: Validare solo le persone maggiorenni
-        LocalDate dataNascita,
-        @NotBlank(message = "Il tipo non può essere vuoto!")
-        String tipo
+        LocalDate dataNascita
 )
 {
 }

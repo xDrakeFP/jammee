@@ -9,6 +9,7 @@ import AuthLayout from "./assets/components/layout/AuthLayout";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import MainLayout from "./assets/components/layout/MainLayout";
+import HomePage from "./pages/HomePage";
 
 function App() {
     const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -23,7 +24,7 @@ function App() {
                             path="/login"
                             element={
                                 <AuthLayout>
-                                    <RegisterPage />
+                                    <LoginPage />
                                 </AuthLayout>
                             }
                         />
@@ -31,7 +32,7 @@ function App() {
                             path="/register"
                             element={
                                 <AuthLayout>
-                                    <LoginPage />
+                                    <RegisterPage />
                                 </AuthLayout>
                             }
                         />
@@ -48,6 +49,8 @@ function App() {
                                 </MainLayout>
                             }
                         />
+                        <Route path="/register" element={<Navigate to="/home" replace />} />
+                        <Route path="/login" element={<Navigate to="/home" replace />} />
                         <Route
                             path="/home"
                             element={

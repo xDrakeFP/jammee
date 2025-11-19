@@ -1,12 +1,12 @@
 import { Navbar, Container, Image, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logout, selectCurrentUser, selectIsAuthenticated } from "../../../store/slices/authSlice";
+import { logout, selectIsAuthenticated } from "../../../store/slices/authSlice";
 
 const Topbar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const user = useSelector(selectCurrentUser);
+    //  const user = useSelector(selectCurrentUser);
     const isAuthenticated = useSelector(selectIsAuthenticated);
 
     const handleLogout = () => {
@@ -21,7 +21,7 @@ const Topbar = () => {
                     {isAuthenticated && (
                         <>
                             <Button onClick={handleLogout}>
-                                <i class="bi bi-door-open"></i>
+                                <i className="bi bi-door-open"></i>
                             </Button>
                         </>
                     )}
@@ -30,7 +30,7 @@ const Topbar = () => {
                     </Col>
 
                     <Col className="lh-sm d-flex flex-column justify-content-center">
-                        <span className="fw-bold text-dark fs-6">${user.username}</span>
+                        <span className="fw-bold text-dark fs-6">{/* ${user.username} */} Ciao </span>
                         <br />
                         <small className="text-dark fst-italic">
                             <a href="#">Il mio profilo</a>
@@ -47,7 +47,7 @@ const Topbar = () => {
                             style={{ width: "45px", height: "45px", minWidth: "45px" }}
                             aria-label="Search"
                         >
-                            <i class="bi bi-search"></i>
+                            <i className="bi bi-search"></i>
                         </Button>
                     </Col>
                 </Row>

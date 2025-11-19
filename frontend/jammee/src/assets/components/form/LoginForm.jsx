@@ -48,8 +48,8 @@ const LoginForm = () => {
                     <Form.Control type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required className="w-100 p-1" />
                 </div>
 
-                <Button type="submit" disabled={isLoading} className="w-100 p-1">
-                    {isLoading ? <p>Caricamento... </p> : <p>Login</p>}
+                <Button type="submit" disabled={isLoading} className="w-100 p-2 mt-3">
+                    {isLoading ? <p>Caricamento... </p> : "Login"}
                 </Button>
 
                 <p className="mt-3 mx-auto">

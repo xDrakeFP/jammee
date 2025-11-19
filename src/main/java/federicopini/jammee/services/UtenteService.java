@@ -49,7 +49,7 @@ public class UtenteService {
         if(this.repo.existsByEmail(body.email())) throw new AlreadyExistingException("Email già in uso!");
         if(this.repo.existsByUsername(body.username())) throw new AlreadyExistingException("Username già in uso!");
         if(this.repo.existsByTelefono(body.telefono())) throw new AlreadyExistingException("Telefono già registrato");
-        TipoUtente found = this.tipoService.findByTipo(body.tipo());
+        TipoUtente found = this.tipoService.findByTipo("USER");
         Utente utente = new Utente(body.username(), body.nome(), body.cognome(), body.email(), bcrypt.encode(body.password()), body.telefono(), body.dataNascita(),found);
     return this.repo.save(utente);
     }
