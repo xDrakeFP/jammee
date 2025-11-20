@@ -1,5 +1,4 @@
 import "./App.css";
-import Topbar from "./assets/components/layout/TopBar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { useSelector } from "react-redux";
@@ -10,13 +9,13 @@ import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import MainLayout from "./assets/components/layout/MainLayout";
 import HomePage from "./pages/HomePage";
+import MusicianFormPage from "./pages/MusicianFormPage";
 
 function App() {
     const isAuthenticated = useSelector(selectIsAuthenticated);
 
     return (
         <BrowserRouter>
-            {isAuthenticated && <Topbar />}
             <Routes>
                 {!isAuthenticated ? (
                     <>
@@ -40,6 +39,14 @@ function App() {
                     </>
                 ) : (
                     <>
+                        <Route
+                            path="/musician/register"
+                            element={
+                                <AuthLayout>
+                                    <MusicianFormPage />
+                                </AuthLayout>
+                            }
+                        ></Route>
                         <Route path="/" element={<Navigate to="/home" replace />} />
                         <Route
                             path="*"

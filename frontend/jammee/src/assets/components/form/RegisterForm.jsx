@@ -38,11 +38,11 @@ export const RegisterForm = () => {
             dispatch(
                 setCredentials({
                     user: result.user,
-                    token: result.token,
+                    token: result.accessToken,
                 })
             );
 
-            navigate("/home");
+            navigate("/musician/register");
         } catch (err) {
             console.error("Errore registrazione:", err);
         }
@@ -88,7 +88,7 @@ export const RegisterForm = () => {
                 </div>
 
                 <Button type="submit" disabled={isLoading} className="w-100 p-1">
-                    {isLoading ? <p>Caricamento... </p> : <p>Register</p>}
+                    {isLoading ? <p>Caricamento... </p> : <p>Procedi</p>}
                 </Button>
 
                 <p className="mt-3 mx-auto">

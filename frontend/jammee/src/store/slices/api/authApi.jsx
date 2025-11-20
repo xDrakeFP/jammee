@@ -8,6 +8,7 @@ export const authApi = apiSlice.injectEndpoints({
                 method: "POST",
                 body: credentials,
             }),
+            providesTags: ["Auth"],
         }),
 
         register: builder.mutation({
@@ -16,13 +17,26 @@ export const authApi = apiSlice.injectEndpoints({
                 method: "POST",
                 body: userData,
             }),
+            providesTags: ["Auth"],
+        }),
+
+        registerMusician: builder.mutation({
+            query: (userData) => ({
+                url: "/musician/create",
+                method: "POST",
+                body: userData,
+            }),
+            providesTags: ["Musicians"],
         }),
 
         getCurrentUser: builder.query({
-            query: () => "/user/me",
+            query: () => ({
+                url: "/user/me",
+                method: "GET",
+            }),
             providesTags: ["Auth"],
         }),
     }),
 });
 
-export const { useLoginMutation, useRegisterMutation, useGetCurrentUserQuery } = authApi;
+export const { useRegisterMusicianMutation, useLoginMutation, useRegisterMutation, useGetCurrentUserQuery } = authApi;

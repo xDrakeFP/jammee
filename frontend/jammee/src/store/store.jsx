@@ -1,13 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { apiSlice } from "./slices/apiSlice";
 import authReducer from "./slices/authSlice";
-import locationReducer from "./slices/posizioneSlice";
+import posizioneReducer from "./reducers/PosizioneReducer";
 
 export const store = configureStore({
     reducer: {
         [apiSlice.reducerPath]: apiSlice.reducer,
         auth: authReducer,
-        location: locationReducer,
+        location: posizioneReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware),
 });

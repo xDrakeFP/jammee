@@ -6,6 +6,8 @@ export const apiSlice = createApi({
         baseUrl: "http://localhost:3001",
         prepareHeaders: (headers, { getState }) => {
             const token = getState().auth.token;
+            console.log("Token nel prepareHeaders:", token);
+            console.log("Stato auth completo:", getState().auth);
 
             if (token) {
                 headers.set("Authorization", `Bearer ${token}`);

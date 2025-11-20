@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../../../store/slices/api/authApi";
 import { setCredentials } from "../../../store/slices/authSlice";
 import { Button, Card, Form, Row } from "react-bootstrap";
+import { apiUrl } from "../../../store/slices/api/handleApi";
 
 const LoginForm = () => {
     const navigate = useNavigate();
@@ -21,13 +22,38 @@ const LoginForm = () => {
 
         try {
             const result = await login(formData).unwrap();
+            console.log("Login riuscito", result);
 
             dispatch(
                 setCredentials({
-                    user: result.user,
-                    token: result.token,
+                    user: null,
+                    token: result.accessToken,
                 })
             );
+
+            console.log("Recupero dati utente");
+
+            const userResponse = await fetch(`${apiUrl}/user/me`, {
+                headers: {
+                    Authorization: `Bearer ${result.accessToken}`,
+                },
+            });
+
+            if (!userResponse.ok) {
+                throw new Error("Errore nel recupero dei dati utente");
+            }
+
+            const userData = await userResponse.json();
+            console.log("Dati utente ottenuti:", userData);
+
+            dispatch(
+                setCredentials({
+                    user: userData,
+                    token: result.accessToken,
+                })
+            );
+            console.log("Credenziali salvate nello store");
+
             navigate("/home");
         } catch (err) {
             console.error("Errore login:", err);
