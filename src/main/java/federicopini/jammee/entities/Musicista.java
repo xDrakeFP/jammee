@@ -1,5 +1,6 @@
 package federicopini.jammee.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Table(name = "musicisti")
+@JsonIgnoreProperties()
 public class Musicista {
     @Id
     @GeneratedValue

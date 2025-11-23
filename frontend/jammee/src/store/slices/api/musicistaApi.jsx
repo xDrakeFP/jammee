@@ -2,7 +2,15 @@ import { apiSlice } from "../apiSlice";
 
 export const musicistaApi = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        getMusicians: builder.query({
+        getMusicianById: builder.query({
+            query: (id) => ({
+                url: `/musician/${id}`,
+                method: "GET",
+            }),
+            providesTags: (result, error, id) => [{ type: "Musicians", id }],
+        }),
+
+        getMusicianMe: builder.query({
             query: () => ({
                 url: "/musician/me",
                 method: "GET",
@@ -12,4 +20,4 @@ export const musicistaApi = apiSlice.injectEndpoints({
     }),
 });
 
-export const { useGetMusiciansQuery } = musicistaApi;
+export const { useGetMusicianMeQuery, useGetMusicianByIdQuery } = musicistaApi;

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout, selectIsAuthenticated } from "../../../store/slices/authSlice";
 import { selectCurrentUser } from "../../../store/slices/authSlice";
-import { useGetCurrentUserQuery } from "../../../store/slices/api/authApi";
+import { useGetMusicianMeQuery } from "../../../store/slices/api/musicistaApi";
 
 const Topbar = () => {
     const dispatch = useDispatch();
@@ -11,9 +11,19 @@ const Topbar = () => {
     const user = useSelector(selectCurrentUser);
     const isAuthenticated = useSelector(selectIsAuthenticated);
 
-    const { data: musician, isLoading } = useGetCurrentUserQuery(undefined, {
+    const {
+        data: musician,
+        isLoading,
+        error,
+    } = useGetMusicianMeQuery(undefined, {
         skip: !isAuthenticated,
     });
+
+    console.log("🎵 Musician data:", musician);
+    console.log("🎵 Is Loading:", isLoading);
+    console.log("🎵 Error:", error);
+    console.log("🎵 Avatar URL:", musician?.avatar);
+    console.log("🎵 Musician data completo:", JSON.stringify(musician, null, 2));
 
     const handleLogout = () => {
         dispatch(logout());
@@ -24,7 +34,7 @@ const Topbar = () => {
         return null;
     }
 
-    const avatarUrl = musician?.avatar || "https://placecats.com/50/50";
+    const avatarUrl = musician?.avatar;
 
     if (isLoading) {
         return (
@@ -53,7 +63,7 @@ const Topbar = () => {
                         <span className="fw-bold text-dark fs-6">{user.username}</span>
                         <br />
                         <small className="text-dark fst-italic">
-                            <a href="#">Il mio profilo</a>
+                            <a href="http://localhost:5173/profile">Il mio profilo</a>
                         </small>
                         <br />
                         <small className="text-dark fst-italic">

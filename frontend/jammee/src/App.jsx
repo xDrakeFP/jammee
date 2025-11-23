@@ -10,6 +10,7 @@ import LoginPage from "./pages/LoginPage";
 import MainLayout from "./assets/components/layout/MainLayout";
 import HomePage from "./pages/HomePage";
 import MusicianFormPage from "./pages/MusicianFormPage";
+import UserPage from "./pages/UserPage";
 
 function App() {
     const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -39,6 +40,22 @@ function App() {
                     </>
                 ) : (
                     <>
+                        <Route
+                            path="/profile"
+                            element={
+                                <MainLayout>
+                                    <UserPage />
+                                </MainLayout>
+                            }
+                        />
+                        <Route
+                            path="/musician/:id"
+                            element={
+                                <MainLayout>
+                                    <UserPage />
+                                </MainLayout>
+                            }
+                        />
                         <Route
                             path="/musician/register"
                             element={
