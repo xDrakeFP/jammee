@@ -2,6 +2,7 @@ import { Container, Row, Col, Card, Image, Badge } from "react-bootstrap";
 import { useGetMusicianMeQuery } from "../store/slices/api/musicistaApi";
 import { useGetMusicianByIdQuery } from "../store/slices/api/musicistaApi";
 import { useParams } from "react-router-dom";
+import SaveLocationButton from "../assets/components/layout/SaveLocationButton";
 
 const UserPage = () => {
     const { id } = useParams();
@@ -122,7 +123,11 @@ const UserPage = () => {
                                     </Card>
                                 </Col>
                             </Row>
-
+                            <Row className="mt-4">
+                                <Col xs={12}>
+                                    <SaveLocationButton />
+                                </Col>
+                            </Row>
                             <Row className="mt-4">
                                 <Col xs={12} className="text-center">
                                     <small className="text-muted">Membro dal {new Date(musician.utente.dataRegistrazione).toLocaleDateString("it-IT")}</small>

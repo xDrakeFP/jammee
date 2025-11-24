@@ -25,7 +25,7 @@ public class Posizione {
     @JoinColumn(name = "musicista_id")
     private Musicista musicista;
 
-    private Double latitutine;
+    private Double latitudine;
 
     private Double longitudine;
 
@@ -33,9 +33,9 @@ public class Posizione {
 
     private Instant timestamp;
 
-    public Posizione(Musicista musicista, Double latitutine, Double longitudine, Double accuracy) {
+    public Posizione(Musicista musicista, Double latitudine, Double longitudine, Double accuracy) {
         this.musicista = musicista;
-        this.latitutine = latitutine;
+        this.latitudine = latitudine;
         this.longitudine = longitudine;
         this.accuracy = accuracy;
         this.timestamp = Instant.now();

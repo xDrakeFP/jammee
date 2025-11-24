@@ -38,7 +38,7 @@ const Topbar = () => {
 
     if (isLoading) {
         return (
-            <Navbar fixed="top" className="d-lg-none w-100 bg-warning py-2">
+            <Navbar fixed="top" className="w-100 bg-warning py-2">
                 <Container fluid className="text-center">
                     <span>Caricamento...</span>
                 </Container>
@@ -47,7 +47,7 @@ const Topbar = () => {
     }
 
     return (
-        <Navbar fixed="top" className="d-lg-none w-100 bg-warning py-2">
+        <Navbar fixed="top" className="w-100 bg-warning py-2">
             <Container fluid className="px-3 justify-content-center ">
                 <Row className="d-flex align-items-center w-100 justify-content-around">
                     <Col className="d-flex justify-content-center">

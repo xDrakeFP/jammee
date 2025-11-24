@@ -7,7 +7,7 @@ export const musicistaApi = apiSlice.injectEndpoints({
                 url: `/musician/${id}`,
                 method: "GET",
             }),
-            providesTags: (result, error, id) => [{ type: "Musicians", id }],
+            providesTags: () => [{ type: "Musicians" }],
         }),
 
         getMusicianMe: builder.query({

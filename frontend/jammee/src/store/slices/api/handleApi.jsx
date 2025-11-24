@@ -4,9 +4,9 @@ export const getHeaders = () => {
         "Content-Type": "application/json",
     };
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     if (token) {
-        headers.Authroization = "Bearer " + token;
+        headers.Authorization = "Bearer " + token;
     }
     return headers;
 };

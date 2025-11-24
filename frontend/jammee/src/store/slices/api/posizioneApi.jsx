@@ -14,9 +14,19 @@ export const locationApi = {
         });
     },
 
+    hasLocation: async () => {
+        return await apiRequest("/location/has-position", {
+            method: "GET",
+        });
+    },
+
     deleteMyLocation: async () => {
         return await apiRequest("/location/me", {
             method: "DELETE",
         });
+    },
+
+    getNearbyUsers: async ({ lat, lng, maxKm, pageNumber, pageSize, sortBy }) => {
+        return await apiRequest(`/posizioni/nearby?lat=${lat}&lng=${lng}&maxKm=${maxKm}&pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}`);
     },
 };
