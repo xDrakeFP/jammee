@@ -15,7 +15,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Table(name = "musicisti")
-@JsonIgnoreProperties()
+@JsonIgnoreProperties(value ={"posizione"})
 public class Musicista {
     @Id
     @GeneratedValue
@@ -31,11 +31,11 @@ public class Musicista {
     @Column(name = "può ospitare")
     private boolean canHost;
 
-    public Musicista(Utente utente, String avatar, String bio, String posizione, String indirizzo, boolean canHost) {
+    public Musicista(Utente utente, String avatar, String bio, String indirizzo, boolean canHost) {
         this.utente = utente;
         this.avatar = Objects.requireNonNullElseGet(avatar, () -> "https://ui-avatars.com/api/?name=" + utente.getNome() + "+" + utente.getCognome());
         this.bio = bio;
-        this.posizione = posizione;
+        this.posizione = "qui";
         this.indirizzo = indirizzo;
         this.canHost = canHost;
     }

@@ -22,7 +22,6 @@ const LoginForm = () => {
 
         try {
             const result = await login(formData).unwrap();
-            console.log("Login riuscito", result);
 
             dispatch(
                 setCredentials({
@@ -30,8 +29,6 @@ const LoginForm = () => {
                     token: result.accessToken,
                 })
             );
-
-            console.log("Recupero dati utente");
 
             const userResponse = await fetch(`${apiUrl}/user/me`, {
                 headers: {
@@ -44,7 +41,6 @@ const LoginForm = () => {
             }
 
             const userData = await userResponse.json();
-            console.log("Dati utente ottenuti:", userData);
 
             dispatch(
                 setCredentials({
@@ -52,7 +48,6 @@ const LoginForm = () => {
                     token: result.accessToken,
                 })
             );
-            console.log("Credenziali salvate nello store");
 
             navigate("/home");
         } catch (err) {

@@ -5,6 +5,10 @@
     text-align: center;
 }
 
+body {
+    font-family: "Open Sans", sans-serif;
+}
+
 .logo {
     height: 6em;
     padding: 1.5em;
@@ -41,13 +45,13 @@
     color: #888;
 }
 
-a {
-    text-decoration: none;
+.link-none {
+    color: black;
 }
-a:link {
-    text-decoration: none;
+.link-none:link {
+    color: black;
 }
 
-a:hover {
-    text-decoration: none;
+.link-none:hover {
+    color: black;
 }

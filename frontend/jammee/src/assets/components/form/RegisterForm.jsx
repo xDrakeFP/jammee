@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { setCredentials } from "../../../store/slices/authSlice";
-import { useRegisterMutation } from "../../../store/slices/api/authApi";
+import { useRegisterMutation, useLoginMutation } from "../../../store/slices/api/authApi";
 import { Form, Card, Row, Button } from "react-bootstrap";
 
 export const RegisterForm = () => {
@@ -20,6 +20,7 @@ export const RegisterForm = () => {
     });
 
     const [register, { isLoading, error }] = useRegisterMutation();
+    const [login] = useLoginMutation();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -35,12 +36,18 @@ export const RegisterForm = () => {
                 dataNascita: formData.dataNascita,
             }).unwrap();
 
+            const loginRes = await login({ email: formData.email, password: formData.password }).unwrap();
+            console.log("Login response:", loginRes);
+
             dispatch(
                 setCredentials({
-                    user: result.user,
-                    token: result.accessToken,
+                    user: result || null,
+                    token: loginRes.accessToken,
                 })
             );
+
+            localStorage.setItem("user", JSON.stringify(result));
+            localStorage.setItem("accessToken", loginRes.accessToken);
 
             navigate("/musician/register");
         } catch (err) {
@@ -87,8 +94,8 @@ export const RegisterForm = () => {
                     <Form.Control type="date" value={formData.dataNascita} onChange={(e) => setFormData({ ...formData, dataNascita: e.target.value })} required className="w-100 p-1" />
                 </div>
 
-                <Button type="submit" disabled={isLoading} className="w-100 p-1">
-                    {isLoading ? <p>Caricamento... </p> : <p>Procedi</p>}
+                <Button type="submit" disabled={isLoading} className="w-100 p-1 align-items-center d-flex justify-content-center mt-3 p-2">
+                    {isLoading ? <p>Caricamento... </p> : "Procedi"}
                 </Button>
 
                 <p className="mt-3 mx-auto">

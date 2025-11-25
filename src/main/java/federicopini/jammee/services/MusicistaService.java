@@ -40,7 +40,7 @@ public class MusicistaService {
 
     public Musicista createMusicista(UUID id,MusicistaDTO body){
         if(this.repo.existsByUtenteId(id)) throw new AlreadyExistingException("Esiste già un Entita Musicista per questo Utente");
-        Musicista musicista = new Musicista(this.utenteService.findById(id), body.avatar(), body.bio(), body.posizione(), body.indirizzo(), body.canHost());
+        Musicista musicista = new Musicista(this.utenteService.findById(id), body.avatar(), body.bio(), body.indirizzo(), body.canHost());
         return this.repo.save(musicista);
     }
 
@@ -48,7 +48,6 @@ public class MusicistaService {
         Musicista found = this.findByUtenteId(id);
         if(!Objects.equals(body.avatar(), found.getAvatar())) found.setAvatar(body.avatar());
         if(!Objects.equals(body.bio(), found.getBio())) found.setBio(body.bio());
-        if(!Objects.equals(body.posizione(), found.getPosizione())) found.setPosizione(body.posizione());
         if(!Objects.equals(body.indirizzo(), found.getIndirizzo())) found.setIndirizzo(body.indirizzo());
         if(body.canHost()!=found.isCanHost()) found.setCanHost(body.canHost());
         return this.repo.save(found);

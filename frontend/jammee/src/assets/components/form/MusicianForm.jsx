@@ -1,13 +1,11 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { setCredentials } from "../../../store/slices/authSlice";
 import { Form, Card, Row, Button } from "react-bootstrap";
 import { useRegisterMusicianMutation } from "../../../store/slices/api/authApi";
 
 export const MusicianForm = () => {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
 
     const { token, user } = useSelector((state) => state.auth);
     console.log("Stato auth in MusicianForm:", { token, user });
@@ -34,12 +32,7 @@ export const MusicianForm = () => {
                 canHost: formData.canHost,
             }).unwrap();
 
-            dispatch(
-                setCredentials({
-                    user: result.user,
-                    token: result.token,
-                })
-            );
+            console.log("Registrazione musicista completata:", result);
 
             navigate("/home");
         } catch (err) {

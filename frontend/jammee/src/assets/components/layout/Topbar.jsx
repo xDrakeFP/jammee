@@ -1,6 +1,6 @@
 import { Navbar, Container, Image, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { logout, selectIsAuthenticated } from "../../../store/slices/authSlice";
 import { selectCurrentUser } from "../../../store/slices/authSlice";
 import { useGetMusicianMeQuery } from "../../../store/slices/api/musicistaApi";
@@ -11,19 +11,9 @@ const Topbar = () => {
     const user = useSelector(selectCurrentUser);
     const isAuthenticated = useSelector(selectIsAuthenticated);
 
-    const {
-        data: musician,
-        isLoading,
-        error,
-    } = useGetMusicianMeQuery(undefined, {
+    const { data: musician, isLoading } = useGetMusicianMeQuery(undefined, {
         skip: !isAuthenticated,
     });
-
-    console.log("🎵 Musician data:", musician);
-    console.log("🎵 Is Loading:", isLoading);
-    console.log("🎵 Error:", error);
-    console.log("🎵 Avatar URL:", musician?.avatar);
-    console.log("🎵 Musician data completo:", JSON.stringify(musician, null, 2));
 
     const handleLogout = () => {
         dispatch(logout());
@@ -52,7 +42,7 @@ const Topbar = () => {
                 <Row className="d-flex align-items-center w-100 justify-content-around">
                     <Col className="d-flex justify-content-center">
                         {isAuthenticated && (
-                            <Button className="btn btn-sm btn-danger px-3 rounded-circle me-1" onClick={handleLogout}>
+                            <Button className="btn btn-sm btn-danger px-3 rounded-circle me-2" onClick={handleLogout}>
                                 <i className="bi bi-door-open fs-6"></i>
                             </Button>
                         )}
@@ -63,11 +53,15 @@ const Topbar = () => {
                         <span className="fw-bold text-dark fs-6">{user.username}</span>
                         <br />
                         <small className="text-dark fst-italic">
-                            <a href="http://localhost:5173/profile">Il mio profilo</a>
+                            <Link to="/profile" className="link-none">
+                                Il mio profilo
+                            </Link>
                         </small>
                         <br />
                         <small className="text-dark fst-italic">
-                            <a href="#">Le mie Jam</a>
+                            <Link to="/profile" className="link-none">
+                                Le mie Jam
+                            </Link>
                         </small>
                     </Col>
                     <Col className="d-flex justify-content-center">
@@ -78,6 +72,15 @@ const Topbar = () => {
                             aria-label="Search"
                         >
                             <i className="bi bi-search"></i>
+                        </Button>
+                        <Button
+                            onClick={() => navigate("/home")}
+                            variant="link"
+                            className="text-dark d-flex align-items-center justify-content-center rounded-circle border border-dark ms-2"
+                            style={{ width: "45px", height: "45px", minWidth: "45px" }}
+                            aria-label="Search"
+                        >
+                            <i className="bi bi-house"></i>
                         </Button>
                     </Col>
                 </Row>

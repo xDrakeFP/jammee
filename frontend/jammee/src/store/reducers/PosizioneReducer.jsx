@@ -1,7 +1,13 @@
-import { LOCATION_TYPES } from "../actions/PosizioneAction";
+import { LOCATION_TYPES, NEARBY_TYPES } from "../actions/PosizioneAction";
 
 const initialState = {
-    currentLocation: null,
+    myLocation: null,
+
+    nearbyUsers: [],
+    totalElements: 0,
+    pageNumber: 0,
+    pageSize: 10,
+    maxKm: Number(localStorage.getItem("maxKm") || 50),
 
     loading: false,
     saving: false,
@@ -19,7 +25,7 @@ const posizioneReducer = (state = initialState, action) => {
         case LOCATION_TYPES.GET_LOCATION_SUCCESS:
             return {
                 ...state,
-                loadiung: false,
+                loading: false,
                 currentLocation: action.payload,
                 error: null,
             };
@@ -47,6 +53,39 @@ const posizioneReducer = (state = initialState, action) => {
                 saving: false,
                 error: action.payload,
             };
+
+        case NEARBY_TYPES.FETCH_NEARBY_USERS_REQUEST:
+            return {
+                ...state,
+                loading: true,
+                error: null,
+            };
+        case NEARBY_TYPES.FETCH_NEARBY_USERS_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                nearbyUsers: action.payload?.content ?? action.payload ?? [],
+                totalElements: action.payload?.totalElements ?? action.payload?.length ?? 0,
+                error: null,
+            };
+        case NEARBY_TYPES.FETCH_NEARBY_USERS_FAILURE:
+            return {
+                ...state,
+                loading: false,
+                error: action.payload,
+            };
+
+        case NEARBY_TYPES.SET_MAX_KM:
+            return {
+                ...state,
+                maxKm: action.payload,
+            };
+        case NEARBY_TYPES.SET_PAGE_NUMBER:
+            return {
+                ...state,
+                pageNumber: action.payload,
+            };
+
         default:
             return state;
     }

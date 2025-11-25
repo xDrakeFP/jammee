@@ -106,12 +106,15 @@ export const saveLocation = (locationData) => {
 
 export const getMyLocation = () => {
     return async (dispatch) => {
+        console.log("Dispatching getMyLocation");
         dispatch({ type: LOCATION_TYPES.GET_LOCATION_REQUEST });
         try {
             const response = await locationApi.getMyLocation();
+            console.log("Posizione ottenuta dal server:", response);
             dispatch({ type: LOCATION_TYPES.GET_LOCATION_SUCCESS, payload: response });
             return response;
         } catch (err) {
+            console.error("Errore getMyLocation:", err);
             dispatch({ type: LOCATION_TYPES.GET_LOCATION_FAILURE, payload: err?.message || "Errore nel recupero della posizione" });
             throw err;
         }
@@ -136,11 +139,15 @@ export const deleteMyLocation = () => {
 export const getNearbyUsers = ({ lat, lng, maxKm, pageNumber, pageSize, sortBy }) => {
     return async (dispatch) => {
         dispatch({ type: NEARBY_TYPES.FETCH_NEARBY_USERS_REQUEST });
+
         try {
+            console.log("getNearbyUsers - request to API with:", { lat, lng, maxKm, pageNumber, pageSize, sortBy });
             const response = await locationApi.getNearbyUsers({ lat, lng, maxKm, pageNumber, pageSize, sortBy });
+            console.log("getNearbyUsers - raw response:", response);
             dispatch({ type: NEARBY_TYPES.FETCH_NEARBY_USERS_SUCCESS, payload: response });
             return response;
         } catch (err) {
+            console.error("getNearbyUsers - error", err);
             dispatch({ type: NEARBY_TYPES.FETCH_NEARBY_USERS_FAILURE, payload: err?.message || "Errore nel recupero degli utenti nelle vicinanze" });
             throw err;
         }

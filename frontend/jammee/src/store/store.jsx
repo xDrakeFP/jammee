@@ -11,3 +11,5 @@ export const store = configureStore({
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware),
 });
+
+console.log("store.auth:", store.getState().auth);
