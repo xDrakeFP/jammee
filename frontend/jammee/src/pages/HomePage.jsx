@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { Alert, Badge, Button, Form, ListGroup, Spinner } from "react-bootstrap";
@@ -12,10 +12,6 @@ const HomePage = () => {
     const [positionNotFound, setPositionNotFound] = useState(false);
     const locationState = useSelector((state) => state.location);
     console.log("Redux locationState:", locationState);
-
-    const [musicianDataById, setMusicianDataById] = useState({});
-
-    const fetchedIdsRef = useRef(new Set());
 
     useEffect(() => {
         const fetchMyLocation = async () => {
@@ -34,47 +30,22 @@ const HomePage = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        console.log("myPosition from store:", myPosition);
-    }, [myPosition]);
-
-    useEffect(() => {
-        if (myPosition?.data.latitudine && myPosition?.data.longitudine) {
+        if (myPosition?.latitudine && myPosition?.longitudine) {
             dispatch(
                 getNearbyUsers({
-                    lat: myPosition.data.latitudine,
-                    lng: myPosition.data.longitudine,
+                    lat: myPosition.latitudine,
+                    lng: myPosition.longitudine,
                     maxKm,
                     pageNumber,
                     pageSize,
                     sortBy: "distance",
                 })
             )
-                .unwrap()
+                .unwrap?.()
                 .then((res) => console.log("Utenti vicini ottenuti:", res))
                 .catch((err) => console.error("Errore ottenendo utenti vicini:", err));
         }
     }, [dispatch, myPosition, maxKm, pageNumber, pageSize]);
-
-    useEffect(() => {
-        if (!nearbyUsers) return;
-
-        nearbyUsers.forEach((pos) => {
-            const id = pos.musicista_id;
-            if (!fetchedIdsRef.current.has(id)) {
-                fetchedIdsRef.current.add(id);
-                (async () => {
-                    try {
-                        const res = await fetch(`http://localhost:3001/musician/${id}`);
-                        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-                        const data = await res.json();
-                        setMusicianDataById((prev) => ({ ...prev, [id]: data.utente }));
-                    } catch (err) {
-                        console.error("Errore fetch musicista", id, err);
-                    }
-                })();
-            }
-        });
-    }, [nearbyUsers]);
 
     const handleDistanceChange = (e) => {
         const value = Number(e.target.value);
@@ -118,14 +89,16 @@ const HomePage = () => {
 
             <ListGroup className="mt-2">
                 {nearbyUsers?.map((pos) => {
-                    const user = musicianDataById[pos.musicista_id];
+                    const musicista = pos.posizione.musicista;
+                    const utente = musicista.utente;
+
                     return (
-                        <ListGroup.Item key={pos.musicista_id} className="d-flex justify-content-between align-items-center">
-                            <div>{user ? `${user.username} (${user.nome})` : "Caricamento..."}</div>
+                        <ListGroup.Item key={musicista.id} className="d-flex justify-content-between align-items-center">
+                            <div>{`${utente.username} (${utente.nome})`}</div>
                             <div>
-                                {pos.distance != null && (
+                                {pos.distanza != null && (
                                     <Badge bg="primary" pill>
-                                        {pos.distance.toFixed(1)} km
+                                        {pos.distanza.toFixed(1)} km
                                     </Badge>
                                 )}
                             </div>

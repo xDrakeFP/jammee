@@ -27,6 +27,6 @@ export const locationApi = {
     },
 
     getNearbyUsers: async ({ lat, lng, maxKm, pageNumber, pageSize, sortBy }) => {
-        return await apiRequest(`/location/nearby?lat=${lat}&lng=${lng}&maxKm=${maxKm}&page=${pageNumber}&page=${pageSize}&sort=${sortBy}`);
+        return await apiRequest(`/location/nearby?lat=${lat}&lng=${lng}&maxKm=${maxKm}&page=${pageNumber}&size=${pageSize}&sort=${sortBy}`);
     },
 };

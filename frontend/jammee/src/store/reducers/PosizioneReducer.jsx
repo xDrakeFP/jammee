@@ -1,7 +1,7 @@
 import { LOCATION_TYPES, NEARBY_TYPES } from "../actions/PosizioneAction";
 
 const initialState = {
-    myLocation: null,
+    myPosition: null,
 
     nearbyUsers: [],
     totalElements: 0,
@@ -26,7 +26,7 @@ const posizioneReducer = (state = initialState, action) => {
             return {
                 ...state,
                 loading: false,
-                currentLocation: action.payload,
+                myPosition: action.payload,
                 error: null,
             };
         case LOCATION_TYPES.GET_LOCATION_FAILURE:

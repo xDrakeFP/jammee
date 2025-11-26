@@ -18,7 +18,6 @@ public class Posizione {
 
     @Id
     @GeneratedValue
-    @Setter(AccessLevel.NONE)
     private UUID id;
 
     @OneToOne
@@ -40,4 +39,5 @@ public class Posizione {
         this.accuracy = accuracy;
         this.timestamp = Instant.now();
     }
+
 }

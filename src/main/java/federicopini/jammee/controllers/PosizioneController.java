@@ -1,22 +1,28 @@
 package federicopini.jammee.controllers;
 
+import federicopini.jammee.DTOs.posizione.PosizioneConDistanzaDTO;
 import federicopini.jammee.DTOs.posizione.PosizioneDTO;
 import federicopini.jammee.entities.Posizione;
 import federicopini.jammee.entities.Utente;
 import federicopini.jammee.exceptions.ValidationException;
 import federicopini.jammee.services.PosizioneService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/location")
+@Slf4j
 public class PosizioneController {
 
     @Autowired
@@ -34,8 +40,14 @@ public class PosizioneController {
     }
 
     @GetMapping("/nearby")
-    public Page<Posizione> getNearby(@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "id") String sortBy,@RequestParam double lat, @RequestParam double lng, @RequestParam(defaultValue = "3000") double maxKm) {
-        return this.service.getNearby(pageNumber,pageSize,sortBy,lat,lng,maxKm);
+    public Page<PosizioneConDistanzaDTO> getNearby(
+            @RequestParam double lat,
+            @RequestParam double lng,
+            @RequestParam(defaultValue = "50") double maxKm,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        return this.service.getNearby(lat, lng, maxKm, pageNumber, pageSize);
     }
 
     @PostMapping("/me")
