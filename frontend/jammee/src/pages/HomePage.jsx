@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { Alert, Badge, Button, Form, ListGroup, Spinner } from "react-bootstrap";
+import { Alert, Badge, Button, Form, ListGroup, Spinner, Image } from "react-bootstrap";
 import { getMyLocation, getNearbyUsers, setMaxKm, setPageNumber } from "../store/actions/PosizioneAction";
 import { useNavigate } from "react-router-dom";
 
@@ -10,19 +10,18 @@ const HomePage = () => {
     const navigate = useNavigate();
     const { myPosition, nearbyUsers, loading, maxKm, pageNumber, pageSize /* totalElements*/ } = useSelector((state) => state.location);
     const [positionNotFound, setPositionNotFound] = useState(false);
-    const locationState = useSelector((state) => state.location);
-    console.log("Redux locationState:", locationState);
 
     useEffect(() => {
         const fetchMyLocation = async () => {
             try {
-                const res = await dispatch(getMyLocation());
-                console.log("Mia posizione ottenuta:", res);
+                await dispatch(getMyLocation());
                 setPositionNotFound(false);
             } catch (err) {
                 if (err?.status === 404) {
-                    console.warn("Posizione non trovata per l'utente.", err);
+                    console.error("Posizione non trovata per l'utente.", err);
                     setPositionNotFound(true);
+                } else {
+                    console.error("Errore :", err);
                 }
             }
         };
@@ -30,21 +29,20 @@ const HomePage = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (myPosition?.latitudine && myPosition?.longitudine) {
-            dispatch(
-                getNearbyUsers({
-                    lat: myPosition.latitudine,
-                    lng: myPosition.longitudine,
-                    maxKm,
-                    pageNumber,
-                    pageSize,
-                    sortBy: "distance",
-                })
-            )
-                .unwrap?.()
-                .then((res) => console.log("Utenti vicini ottenuti:", res))
-                .catch((err) => console.error("Errore ottenendo utenti vicini:", err));
-        }
+        if (!myPosition?.latitudine || !myPosition?.longitudine) return;
+
+        dispatch(
+            getNearbyUsers({
+                lat: myPosition.latitudine,
+                lng: myPosition.longitudine,
+                maxKm,
+                pageNumber,
+                pageSize,
+                sortBy: "distance",
+            })
+        )
+            .then((res) => console.log("Utenti vicini ottenuti:", res))
+            .catch((err) => console.error("Errore ottenendo utenti vicini:", err));
     }, [dispatch, myPosition, maxKm, pageNumber, pageSize]);
 
     const handleDistanceChange = (e) => {
@@ -93,8 +91,11 @@ const HomePage = () => {
                     const utente = musicista.utente;
 
                     return (
-                        <ListGroup.Item key={musicista.id} className="d-flex justify-content-between align-items-center">
-                            <div>{`${utente.username} (${utente.nome})`}</div>
+                        <ListGroup.Item key={musicista.id} className="d-flex justify-content-between align-items-center" onClick={() => navigate(`/musician/${musicista.id}`)}>
+                            <div>
+                                <Image className="me-2" src={musicista.avatar || "https://placecats.com/100/100"} alt="Profile" roundedCircle width={50} height={50} style={{ objectFit: "cover" }} />
+                                {`${utente.username} - ${utente.nome}`}
+                            </div>
                             <div>
                                 {pos.distanza != null && (
                                     <Badge bg="primary" pill>
