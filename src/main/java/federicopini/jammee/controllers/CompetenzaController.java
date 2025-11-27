@@ -37,7 +37,7 @@ public class CompetenzaController {
         return this.service.createCompetenza(body,utente.getId());
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public Page<Competenza> getByUserId(@PathVariable UUID userId,@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "id") String sortBy)
     {
         return this.service.getByUserId(pageNumber, pageSize,sortBy,userId);

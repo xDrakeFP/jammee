@@ -2,16 +2,31 @@ import { useState } from "react";
 import { Modal, Button, Form, Spinner, Alert } from "react-bootstrap";
 import { useGetAllStrumentiQuery } from "../../../store/slices/api/strumentiApi";
 
-const addCompetenza = ({ show, handleClose, onSubmit }) => {
+const CompetenzaModal = ({ show, handleClose, onSubmit }) => {
     const [strumentoId, setStrumentoId] = useState("");
     const [voto, setVoto] = useState(1);
     const [note, setNote] = useState("");
+    const [submitting, setSubmitting] = useState(false);
 
     const { data: strumenti, error, isLoading } = useGetAllStrumentiQuery();
 
-    const handleSubmit = (e) => {
+    const strumentiFinal = Array.isArray(strumenti) ? strumenti : strumenti?.content ?? [];
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        onSubmit({ strumentoId, voto, note });
+        if (!strumentoId) return;
+        try {
+            setSubmitting(true);
+            await onSubmit({ strumentoId, voto, note });
+            setStrumentoId("");
+            setVoto(1);
+            setNote("");
+            handleClose();
+        } catch (err) {
+            console.error("Errore aggiunta competenza", err);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -21,17 +36,21 @@ const addCompetenza = ({ show, handleClose, onSubmit }) => {
             </Modal.Header>
 
             <Modal.Body>
-                {isLoading && <Spinner animation="border" />}
+                {isLoading && (
+                    <div className="text-center">
+                        <Spinner animation="border" />
+                    </div>
+                )}
 
                 {error && <Alert variant="danger">Errore nel caricamento degli strumenti.</Alert>}
 
-                {!isLoading && strumenti && (
+                {!isLoading && strumentiFinal && (
                     <Form onSubmit={handleSubmit}>
                         <Form.Group className="mb-3">
                             <Form.Label>Strumento</Form.Label>
                             <Form.Select value={strumentoId} onChange={(e) => setStrumentoId(e.target.value)} required>
                                 <option value="">Seleziona uno strumento...</option>
-                                {strumenti.map((s) => (
+                                {strumentiFinal.map((s) => (
                                     <option key={s.id} value={s.id}>
                                         {s.nome}
                                     </option>
@@ -40,8 +59,8 @@ const addCompetenza = ({ show, handleClose, onSubmit }) => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Voto (1-10)</Form.Label>
-                            <Form.Control type="number" min="1" max="10" value={voto} onChange={(e) => setVoto(Number(e.target.value))} required />
+                            <Form.Label>Voto (1-5)</Form.Label>
+                            <Form.Control type="number" min="1" max="5" value={voto} onChange={(e) => setVoto(Number(e.target.value))} required />
                         </Form.Group>
 
                         <Form.Group className="mb-3">
@@ -49,8 +68,8 @@ const addCompetenza = ({ show, handleClose, onSubmit }) => {
                             <Form.Control as="textarea" rows={3} value={note} onChange={(e) => setNote(e.target.value)} />
                         </Form.Group>
 
-                        <Button type="submit" variant="primary" className="w-100">
-                            Aggiungi
+                        <Button type="submit" variant="primary" className="w-100" disabled={submitting || !strumentoId}>
+                            {submitting ? "Salvataggio..." : "Aggiungi"}
                         </Button>
                     </Form>
                 )}
@@ -59,4 +78,4 @@ const addCompetenza = ({ show, handleClose, onSubmit }) => {
     );
 };
 
-export default addCompetenza;
+export default CompetenzaModal;

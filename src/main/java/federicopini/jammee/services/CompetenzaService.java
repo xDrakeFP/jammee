@@ -68,6 +68,7 @@ public class CompetenzaService {
     public void deleteCompetenza(UUID strumentoId, UUID utenteId){
         Musicista musicistaFound = this.musicistaService.findByUtenteId(utenteId);
         Competenza found = this.repo.findByMusicistaIdAndStrumentoId(musicistaFound.getId(),strumentoId).orElseThrow(()-> new NotFoundException("Nessuna competenza registrata per questo strumento con questo utente"));
+        this.repo.delete(found);
     }
 
 
