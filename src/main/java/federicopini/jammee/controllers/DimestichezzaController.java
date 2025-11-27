@@ -36,10 +36,10 @@ public class DimestichezzaController {
         return this.service.addDimestichezza(body, utenteLoggato.getId());
     }
 
-    @GetMapping("/{userId}")
-    public Page<Dimestichezza> getByUserId(@PathVariable UUID id,@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "id") String sortBy)
+    @GetMapping("/user/{userId}")
+    public Page<Dimestichezza> getByUserId(@PathVariable UUID userId,@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "id") String sortBy)
     {
-        return this.service.getByUserId(pageNumber,pageSize,sortBy,id);
+        return this.service.getByUserId(pageNumber,pageSize,sortBy,userId);
     }
 
     @GetMapping("/me")

@@ -1,29 +1,29 @@
 import { useState } from "react";
 import { Modal, Button, Form, Spinner, Alert } from "react-bootstrap";
-import { useGetAllStrumentiQuery } from "../../../store/slices/api/strumentiApi";
+import { useGetAllGeneriQuery } from "../../../../store/slices/api/generiApi";
 
-const CompetenzaModal = ({ show, handleClose, onSubmit }) => {
-    const [strumentoId, setStrumentoId] = useState("");
+const DimestichezzaModal = ({ show, handleClose, onSubmit }) => {
+    const [genereId, setGenereId] = useState("");
     const [voto, setVoto] = useState(1);
     const [note, setNote] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
-    const { data: strumenti, error, isLoading } = useGetAllStrumentiQuery();
+    const { data: generi, error, isLoading } = useGetAllGeneriQuery();
 
-    const strumentiFinal = Array.isArray(strumenti) ? strumenti : strumenti?.content ?? [];
+    const generiFinal = Array.isArray(generi) ? generi : generi?.content ?? [];
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!strumentoId) return;
+        if (!genereId) return;
         try {
             setSubmitting(true);
-            await onSubmit({ strumentoId, voto, note });
-            setStrumentoId("");
+            await onSubmit({ genereId, voto, note });
+            setGenereId("");
             setVoto(1);
             setNote("");
             handleClose();
         } catch (err) {
-            console.error("Errore aggiunta competenza", err);
+            console.error("Errore aggiunta dimestichezza", err);
         } finally {
             setSubmitting(false);
         }
@@ -32,7 +32,7 @@ const CompetenzaModal = ({ show, handleClose, onSubmit }) => {
     return (
         <Modal show={show} onHide={handleClose} centered>
             <Modal.Header closeButton>
-                <Modal.Title>Aggiungi Competenza</Modal.Title>
+                <Modal.Title>Aggiungi Dimestichezza</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
@@ -42,17 +42,17 @@ const CompetenzaModal = ({ show, handleClose, onSubmit }) => {
                     </div>
                 )}
 
-                {error && <Alert variant="danger">Errore nel caricamento degli strumenti.</Alert>}
+                {error && <Alert variant="danger">Errore nel caricamento dei generi.</Alert>}
 
-                {!isLoading && strumentiFinal && (
+                {!isLoading && generiFinal && (
                     <Form onSubmit={handleSubmit}>
                         <Form.Group className="mb-3">
-                            <Form.Label>Strumento</Form.Label>
-                            <Form.Select value={strumentoId} onChange={(e) => setStrumentoId(e.target.value)} required>
-                                <option value="">Seleziona uno strumento...</option>
-                                {strumentiFinal.map((s) => (
-                                    <option key={s.id} value={s.id}>
-                                        {s.nome}
+                            <Form.Label>Genere</Form.Label>
+                            <Form.Select value={genereId} onChange={(e) => setGenereId(e.target.value)} required>
+                                <option value="">Seleziona un genere</option>
+                                {generiFinal.map((g) => (
+                                    <option key={g.id} value={g.id}>
+                                        {g.genere}
                                     </option>
                                 ))}
                             </Form.Select>
@@ -68,7 +68,7 @@ const CompetenzaModal = ({ show, handleClose, onSubmit }) => {
                             <Form.Control as="textarea" rows={3} value={note} onChange={(e) => setNote(e.target.value)} />
                         </Form.Group>
 
-                        <Button type="submit" variant="primary" className="w-100" disabled={submitting || !strumentoId}>
+                        <Button type="submit" variant="primary" className="w-100" disabled={submitting || !genereId}>
                             {submitting ? "Salvataggio..." : "Aggiungi"}
                         </Button>
                     </Form>
@@ -78,4 +78,4 @@ const CompetenzaModal = ({ show, handleClose, onSubmit }) => {
     );
 };
 
-export default CompetenzaModal;
+export default DimestichezzaModal;

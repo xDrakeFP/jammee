@@ -58,11 +58,11 @@ const Topbar = () => {
                             </Link>
                         </small>
                         <br />
-                        <small className="text-dark fst-italic">
+                        {/* <small className="text-dark fst-italic">
                             <Link to="/profile" className="link-none">
                                 Le mie Jam
                             </Link>
-                        </small>
+                        </small> */}
                     </Col>
                     <Col className="d-flex justify-content-center">
                         <Button
