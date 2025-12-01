@@ -7,6 +7,7 @@ import SaveLocationButton from "../assets/components/layout/SaveLocationButton";
 import CompetenzaModal from "../assets/components/layout/modals/CompetenzaModal";
 import DimestichezzaModal from "../assets/components/layout/modals/DimestichezzaModal";
 import FeedbackModal from "../assets/components/layout/modals/FeedbackModal";
+import MessageModal from "../assets/components/layout/modals/MessageModal";
 import { useGetCompetenzaByMusicistaQuery, useCreateCompetenzaMutation, useDeleteCompetenzaMutation } from "../store/slices/api/competenzaApi";
 import { useCreateDimestichezzaMutation, useGetDimestichezzaByMusicistaQuery } from "../store/slices/api/dimestichezzaApi";
 import { useCreateFeedbackMutation, useGetFeedbackByRecipientQuery, useDeleteFeedbackMutation } from "../store/slices/api/feedbackApi";
@@ -45,6 +46,9 @@ const UserPage = () => {
     console.log("musicianId prima di get all feedback", musicianId);
     const { data: feedbackData, isLoadingFeedback, error: feedbackError } = useGetFeedbackByRecipientQuery(musicianId, { skip: !musicianId });
 
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [replyRecipient, setReplyRecipient] = useState(null);
+
     // eslint-disable-next-line no-unused-vars
     const [createCompetenza, { isLoading: adding }] = useCreateCompetenzaMutation();
     const [deleteCompetezza, { isLoading: deleting }] = useDeleteCompetenzaMutation();
@@ -65,6 +69,13 @@ const UserPage = () => {
 
     const handleOpenFeedback = () => setShowFeedbackModal(true);
     const handleCloseFeedback = () => setShowFeedbackModal(false);
+
+    const handleOpenMessageModal = () => {
+        setReplyRecipient(musician?.id);
+        setShowMessageModal(true);
+    };
+
+    const handleCloseMessageModal = () => setShowMessageModal(false);
 
     const handleCompetenzaSubmit = async ({ strumentoId, voto, note }) => {
         try {
@@ -370,11 +381,27 @@ const UserPage = () => {
                             </Button>
                         </div>
                     )}
+
+                    {!isOwnProfile && (
+                        <div className="d-flex justify-content-center mb-3">
+                            <Button variant="success" onClick={handleOpenMessageModal}>
+                                Invia Messaggio
+                            </Button>
+                        </div>
+                    )}
                 </Col>
             </Row>
             <CompetenzaModal show={showModal} handleClose={handleCloseModal} onSubmit={handleCompetenzaSubmit} />
             <DimestichezzaModal show={showModalD} handleClose={handleCloseModalD} onSubmit={handleDimestichezzaSubmit} />
             <FeedbackModal show={showFeedbackModal} handleClose={handleCloseFeedback} onSubmit={handleFeedbackSubmit} />
+            <MessageModal
+                show={showMessageModal}
+                onClose={handleCloseMessageModal}
+                recipientId={replyRecipient}
+                onSent={() => {
+                    setShowMessageModal(false);
+                }}
+            />
         </Container>
     );
 };

@@ -9,6 +9,10 @@ import federicopini.jammee.exceptions.NotFoundException;
 import federicopini.jammee.exceptions.UnauthorizedException;
 import federicopini.jammee.repos.MessaggioTempRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -46,4 +50,19 @@ public class MessaggioTempService {
         found.setLetto(!found.isLetto());
         return this.repo.save(found);
     }
+
+    public Page<MessaggioTemp> GetMessageByDestinatario (UUID id, int pageNumber, int pageSize, String sortBy) {
+        if (pageSize > 30) pageSize = 30;
+        Musicista foundMusicista = this.musicistaService.findByUtenteId(id);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
+        return this.repo.findByDestinatario_Id(foundMusicista.getId(),pageable);
+    }
+
+    public Page<MessaggioTemp> GetMessageByMittente (UUID id,int pageNumber, int pageSize, String sortBy) {
+        if (pageSize > 30) pageSize = 30;
+        Musicista foundMusicista = this.musicistaService.findByUtenteId(id);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
+        return this.repo.findByMittente_Id(foundMusicista.getId(),pageable);
+    }
+
 }

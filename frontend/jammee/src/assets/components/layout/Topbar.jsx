@@ -49,7 +49,7 @@ const Topbar = () => {
                                 <i className="bi bi-door-open fs-6"></i>
                             </Button>
                         )}
-                        <Image src={avatarUrl} alt="Profile" roundedCircle width={50} height={50} style={{ objectFit: "cover" }} />{" "}
+                        <Image onClick={() => navigate("/inbox")} src={avatarUrl} alt="Profile" roundedCircle width={50} height={50} style={{ objectFit: "cover" }} />{" "}
                     </Col>
 
                     <Col className="lh-sm d-flex flex-column justify-content-center">

@@ -1,6 +1,5 @@
 package federicopini.jammee.DTOs.musicista;
 
-import java.util.UUID;
 
 public record MusicistaDTO (
         String avatar,

@@ -7,6 +7,7 @@ import federicopini.jammee.exceptions.ValidationException;
 import federicopini.jammee.services.MessaggioTempService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -40,5 +41,16 @@ public class MessaggioController {
     public MessaggioTemp readMessaggio(@PathVariable UUID id){
         return this.messaggioTempService.read(id);
     }
+
+    @GetMapping("/inbox")
+    public Page<MessaggioTemp> findMyMessages(@AuthenticationPrincipal Utente utente, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "id") String sortBy){
+        return this.messaggioTempService.GetMessageByDestinatario(utente.getId(), pageNumber, pageSize, sortBy);
+    }
+
+    @GetMapping("/sent")
+    public Page<MessaggioTemp> findMessageISent(@AuthenticationPrincipal Utente utente, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(defaultValue = "id") String sortBy){
+        return this.messaggioTempService.GetMessageByMittente(utente.getId(),pageNumber,pageSize,sortBy);
+    }
+
 
 }

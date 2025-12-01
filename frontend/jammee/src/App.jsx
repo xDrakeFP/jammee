@@ -10,6 +10,7 @@ import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import MusicianFormPage from "./pages/MusicianFormPage";
 import UserPage from "./pages/UserPage";
+import InboxPage from "./pages/InboxPage";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -84,6 +85,17 @@ function App() {
                         <ProtectedRoute>
                             <MainLayout>
                                 <UserPage />
+                            </MainLayout>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/inbox"
+                    element={
+                        <ProtectedRoute>
+                            <MainLayout>
+                                <InboxPage />
                             </MainLayout>
                         </ProtectedRoute>
                     }
