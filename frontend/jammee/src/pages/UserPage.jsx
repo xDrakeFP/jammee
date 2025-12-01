@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Container, Row, Col, Card, Image, Badge, Button, Spinner, Alert } from "react-bootstrap";
 import { useGetMusicianMeQuery } from "../store/slices/api/musicistaApi";
 import { useGetMusicianByIdQuery } from "../store/slices/api/musicistaApi";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import SaveLocationButton from "../assets/components/layout/SaveLocationButton";
 import CompetenzaModal from "../assets/components/layout/modals/CompetenzaModal";
 import DimestichezzaModal from "../assets/components/layout/modals/DimestichezzaModal";
@@ -13,6 +13,7 @@ import { useCreateFeedbackMutation, useGetFeedbackByRecipientQuery, useDeleteFee
 
 const UserPage = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
 
     const {
         data: myMusician,
@@ -146,7 +147,7 @@ const UserPage = () => {
     const avatarUrl = musician?.avatar?.trim();
 
     return (
-        <Container className="py-5 bg-danger">
+        <Container className="py-5 bg-danger mt-5">
             <Row className="justify-content-center mt-3">
                 <Col xs={12} md={10} lg={8}>
                     <Card className="shadow-sm border-0">
@@ -232,7 +233,7 @@ const UserPage = () => {
                     <Card className="bg-light border-0">
                         <Card.Body>
                             <div className="d-flex justify-content-between align-items-center mb-3">
-                                <h5 className="text-muted mb-0">Competenze</h5>
+                                <h5 className="text-muted mb-3 mx-auto">Competenza</h5>
                                 {!id && (
                                     <Button variant="primary" onClick={handleOpenModal}>
                                         <i className="bi bi-plus"></i>
@@ -253,7 +254,8 @@ const UserPage = () => {
                                     {competenzeData.content.map((c) => (
                                         <Row key={c.id} className="d-flex align-items-center mb-3 ">
                                             <Col className="text-start">
-                                                <strong>{c.strumento?.nome}</strong> — {c.voto}/5
+                                                <strong>{c.strumento?.nome}</strong>
+                                                <p className="mb-1">{c.voto}/5</p>
                                                 {c.note && <div className="text-muted small">{c.note}</div>}
                                             </Col>
 
@@ -274,7 +276,7 @@ const UserPage = () => {
                     <Card className="bg-light border-0 mt-3">
                         <Card.Body>
                             <div className="d-flex justify-content-between align-items-center mb-3">
-                                <h5 className="text-muted mb-0">Dimestichezza generi</h5>
+                                <h5 className="text-muted mb-3 mx-auto">Dimestichezza</h5>
                                 {!id && (
                                     <Button variant="primary" onClick={handleOpenModalD}>
                                         <i className="bi bi-plus"></i>
@@ -295,7 +297,8 @@ const UserPage = () => {
                                     {dimestichezzeData.content.map((d) => (
                                         <Row key={d.id} className="d-flex align-items-center mb-3">
                                             <Col className="text-start">
-                                                <strong>{d.genere?.genere}</strong> — {d.voto}/5
+                                                <strong>{d.genere?.genere}</strong>
+                                                <p className="mb-2">{d.voto}/5</p>
                                                 {d.note && <div className="text-muted small">{d.note}</div>}
                                             </Col>
                                             <Col className="text-end">
@@ -312,24 +315,16 @@ const UserPage = () => {
                         </Card.Body>
                     </Card>
 
-                    {!isOwnProfile && (
-                        <div className="d-flex justify-content-end mb-2">
-                            <Button variant="outline-primary" size="sm" onClick={handleOpenFeedback}>
-                                Lascia feedback
-                            </Button>
-                        </div>
-                    )}
-
                     <Card className="bg-light border-0 mt-3">
                         <Card.Body>
-                            <h6 className="text-muted">Feedback</h6>
+                            <h5 className="text-muted mb-3">Feedback</h5>
 
                             {isLoadingFeedback && (
                                 <div className="text-center">
                                     <Spinner animation="border" />
                                 </div>
                             )}
-
+                            {console.log("feedbackError :", feedbackError, feedbackData)}
                             {feedbackError && <Alert variant="danger">Errore caricamento feedback.</Alert>}
 
                             {!isLoadingFeedback && (!feedbackData || feedbackData.content.length === 0) && <Alert variant="info">Nessun feedback per questo utente.</Alert>}
@@ -337,9 +332,20 @@ const UserPage = () => {
                             {!isLoadingFeedback && feedbackData && feedbackData.content.length > 0 && (
                                 <div className="feedback-list mt-2">
                                     {feedbackData.content.map((f) => (
-                                        <div key={f.id} className="feedback-item d-flex justify-content-between align-items-start mb-3">
-                                            <div>
-                                                <strong>{f.mittente?.utente?.username ?? "Utente"}</strong>
+                                        <div key={f.id} onClick={() => navigate(`/musician/${f.mittente?.id}`)} className="feedback-item d-flex justify-content-between align-items-start mb-3">
+                                            <div className="m-auto">
+                                                <div className="my-2">
+                                                    <Image
+                                                        className="me-2"
+                                                        src={f.mittente?.utente?.avatar || "https://placecats.com/100/100"}
+                                                        alt="Profile"
+                                                        roundedCircle
+                                                        width={50}
+                                                        height={50}
+                                                        style={{ objectFit: "cover" }}
+                                                    />
+                                                    <strong>{f.mittente?.utente?.username ?? "Utente"}</strong>
+                                                </div>
                                                 <div className="small text-muted"> {new Date(f.timestamp).toLocaleString()}</div>
                                                 <div className="mt-1">{f.note}</div>
                                                 <div className="small text-secondary mt-1">Voto: {f.voto}/5</div>
@@ -356,6 +362,14 @@ const UserPage = () => {
                             )}
                         </Card.Body>
                     </Card>
+
+                    {!isOwnProfile && (
+                        <div className="d-flex justify-content-end mb-2">
+                            <Button variant="primary" size="sm" onClick={handleOpenFeedback} className="mx-auto mt-1">
+                                Lascia un feedback
+                            </Button>
+                        </div>
+                    )}
                 </Col>
             </Row>
             <CompetenzaModal show={showModal} handleClose={handleCloseModal} onSubmit={handleCompetenzaSubmit} />

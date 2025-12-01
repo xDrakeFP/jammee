@@ -5,6 +5,18 @@
     text-align: center;
 }
 
+.feedback-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.feedback-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    padding-bottom: 8px;
+    margin: 0 auto;
+}
+
 body {
     font-family: "Open Sans", sans-serif;
 }

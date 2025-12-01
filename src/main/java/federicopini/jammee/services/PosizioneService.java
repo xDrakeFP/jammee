@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,60 +29,143 @@ public class PosizioneService {
     private MusicistaService musicistaService;
 
 
-    public Page<PosizioneConDistanzaDTO> getNearby(double lat, double lng, double maxKm, int pageNumber, int pageSize) {
+    public Page<PosizioneConDistanzaDTO> getNearby(
+            double lat,
+            double lng,
+            double maxKm,
+            int pageNumber,
+            int pageSize,
+            UUID strumentoId,
+            UUID genereId
+    ) {
+        System.out.println("genereId = " + genereId);
+        System.out.println("strumentoId = " + strumentoId);
         int offset = pageNumber * pageSize;
 
-        String sql = """
-        SELECT *
+        StringBuilder sql = new StringBuilder();
+        List<Object> params = new ArrayList<>();
+
+        sql.append("""
+        SELECT sub.*, sub.distanza
         FROM (
-            SELECT p.*,
-                   (6371 * acos(
-                       cos(radians(?)) * cos(radians(p.latitudine)) *
-                       cos(radians(p.longitudine) - radians(?)) +
-                       sin(radians(?)) * sin(radians(p.latitudine))
-                   )) AS distanza
+            SELECT p.id, p.musicista_id, p.latitudine, p.longitudine, p.accuracy, p.timestamp,
+                (6371 * acos(
+                    cos(radians(?)) * cos(radians(p.latitudine)) *
+                    cos(radians(p.longitudine) - radians(?)) +
+                    sin(radians(?)) * sin(radians(p.latitudine))
+                )) AS distanza
             FROM posizioni p
         ) AS sub
-        WHERE sub.distanza <= ?
-        ORDER BY sub.distanza ASC
-        LIMIT ? OFFSET ?
-    """;
+        WHERE 1 = 1
+        """);
 
-        List<PosizioneConDistanzaDTO> result = jdbcTemplate.query(
-                sql,
-                new Object[]{lat, lng, lat, maxKm, pageSize, offset},
+        params.add(lat);
+        params.add(lng);
+        params.add(lat);
+
+        sql.append(" AND sub.distanza <= ? ");
+        params.add(maxKm);
+
+        if (strumentoId != null) {
+            sql.append("""
+            AND EXISTS (
+                SELECT 1 FROM competenze c
+                WHERE c.musicista_id = sub.musicista_id
+                  AND c.strumento_id = ?
+            )
+        """);
+            params.add(strumentoId);
+        }
+
+        if (genereId != null) {
+            sql.append("""
+            AND EXISTS (
+                SELECT 1 FROM dimestichezze f
+                WHERE f.musicista_id = sub.musicista_id
+                  AND f.genere_id = ?
+            )
+        """);
+            params.add(genereId);
+        }
+
+        sql.append(" ORDER BY sub.distanza ASC ");
+        sql.append("LIMIT ? OFFSET ?");
+        params.add(pageSize);
+        params.add(offset);
+
+        List<PosizioneConDistanzaDTO> list = jdbcTemplate.query(
+                sql.toString(),
+                params.toArray(),
                 (rs, rowNum) -> {
                     Posizione posizione = new Posizione();
                     posizione.setId(UUID.fromString(rs.getString("id")));
                     posizione.setMusicista(this.musicistaService.findById(UUID.fromString(rs.getString("musicista_id"))));
-                    posizione.setLatitudine(rs.getDouble("latitudine"));
-                    posizione.setLongitudine(rs.getDouble("longitudine"));
+                    posizione.setLatitudine(rs.getObject("latitudine", Double.class));
+                    posizione.setLongitudine(rs.getObject("longitudine", Double.class));
                     posizione.setAccuracy(rs.getObject("accuracy", Double.class));
                     posizione.setTimestamp(rs.getTimestamp("timestamp").toInstant());
 
                     double distanza = rs.getDouble("distanza");
-
                     return new PosizioneConDistanzaDTO(posizione, distanza);
                 }
         );
 
-        String countSql = """
-        SELECT COUNT(*)
+        StringBuilder countSql = new StringBuilder();
+        List<Object> countParams = new ArrayList<>();
+
+        countSql.append("""
+        SELECT COUNT(*) 
         FROM (
-            SELECT (6371 * acos(
-                       cos(radians(?)) * cos(radians(p.latitudine)) *
-                       cos(radians(p.longitudine) - radians(?)) +
-                       sin(radians(?)) * sin(radians(p.latitudine))
-                   )) AS distanza
+            SELECT p.id, p.musicista_id,
+                (6371 * acos(
+                    cos(radians(?)) * cos(radians(p.latitudine)) *
+                    cos(radians(p.longitudine) - radians(?)) +
+                    sin(radians(?)) * sin(radians(p.latitudine))
+                )) AS distanza
             FROM posizioni p
         ) AS sub
-        WHERE sub.distanza <= ?
-    """;
+        WHERE 1 = 1
+    """);
 
-        Integer total = jdbcTemplate.queryForObject(countSql, new Object[]{lat, lng, lat, maxKm}, Integer.class);
+        countParams.add(lat);
+        countParams.add(lng);
+        countParams.add(lat);
 
-        return new PageImpl<>(result, PageRequest.of(pageNumber, pageSize), total);
+        countSql.append(" AND sub.distanza <= ? ");
+        countParams.add(maxKm);
+
+        if (strumentoId != null) {
+            countSql.append("""
+            AND EXISTS (
+                SELECT 1 FROM competenze c
+                WHERE c.musicista_id = sub.musicista_id
+                  AND c.strumento_id = ?
+            )
+        """);
+            countParams.add(strumentoId);
+        }
+
+        if (genereId != null) {
+            countSql.append("""
+            AND EXISTS (
+                SELECT 1 FROM dimestichezze f
+                WHERE f.musicista_id = sub.musicista_id
+                  AND f.genere_id = ?
+            )
+        """);
+            countParams.add(genereId);
+        }
+
+        Integer total = jdbcTemplate.queryForObject(countSql.toString(), countParams.toArray(), Integer.class);
+        if (total == null) total = 0;
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+        System.out.println("SQL: " + sql.toString());
+        System.out.println("Params: " + params);
+        return new PageImpl<>(list, pageable, total.longValue());
     }
+
 
 
 

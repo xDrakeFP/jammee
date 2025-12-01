@@ -59,5 +59,4 @@ public class DimestichezzaController {
         this.service.deleteDimestichezza(genereId,utenteLoggato.getId());
     }
 
-
 }

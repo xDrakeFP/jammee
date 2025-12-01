@@ -4,12 +4,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { logout, selectIsAuthenticated } from "../../../store/slices/authSlice";
 import { selectCurrentUser } from "../../../store/slices/authSlice";
 import { useGetMusicianMeQuery } from "../../../store/slices/api/musicistaApi";
+import { useState } from "react";
+import SearchModal from "./modals/SearchModal";
 
 const Topbar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const user = useSelector(selectCurrentUser);
     const isAuthenticated = useSelector(selectIsAuthenticated);
+    const [showSearch, setShowSearch] = useState(false);
 
     const { data: musician, isLoading } = useGetMusicianMeQuery(undefined, {
         skip: !isAuthenticated,
@@ -66,6 +69,7 @@ const Topbar = () => {
                     </Col>
                     <Col className="d-flex justify-content-center">
                         <Button
+                            onClick={() => setShowSearch(true)}
                             variant="link"
                             className="text-dark d-flex align-items-center justify-content-center rounded-circle border border-dark"
                             style={{ width: "45px", height: "45px", minWidth: "45px" }}
@@ -85,6 +89,17 @@ const Topbar = () => {
                     </Col>
                 </Row>
             </Container>
+            <SearchModal
+                show={showSearch}
+                onClose={() => setShowSearch(false)}
+                onSearch={({ strumentoId, genereId }) => {
+                    const params = new URLSearchParams();
+                    if (strumentoId) params.set("strumentoId", strumentoId);
+                    if (genereId) params.set("genereId", genereId);
+                    navigate(`/home?${params.toString()}`);
+                    setShowSearch(false);
+                }}
+            />
         </Navbar>
     );
 };

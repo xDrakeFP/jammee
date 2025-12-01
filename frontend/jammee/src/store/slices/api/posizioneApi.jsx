@@ -1,3 +1,4 @@
+import { apiSlice } from "../apiSlice";
 import { apiRequest } from "./handleApi";
 
 export const locationApi = {
@@ -25,8 +26,27 @@ export const locationApi = {
             method: "DELETE",
         });
     },
-
-    getNearbyUsers: async ({ lat, lng, maxKm, pageNumber, pageSize, sortBy }) => {
-        return await apiRequest(`/location/nearby?lat=${lat}&lng=${lng}&maxKm=${maxKm}&page=${pageNumber}&size=${pageSize}&sort=${sortBy}`);
-    },
 };
+
+export const posizioniApi = apiSlice.injectEndpoints({
+    endpoints: (builder) => ({
+        getNearby: builder.query({
+            query: ({ lat, lng, maxKm, pageNumber = 0, pageSize = 10, strumentoId, genereId }) => {
+                const params = new URLSearchParams();
+                if (lat != null) params.append("lat", lat);
+                if (lng != null) params.append("lng", lng);
+                params.append("maxKm", String(maxKm));
+                params.append("pageNumber", String(pageNumber));
+                params.append("pageSize", String(pageSize));
+                if (strumentoId) params.append("strumentoId", strumentoId);
+                if (genereId) params.append("genereId", genereId);
+
+                return `/location/search?${params.toString()}`;
+            },
+            providesTags: (result) =>
+                result?.content ? [...result.content.map((p) => ({ type: "Posizione", id: p.posizione.id })), { type: "Posizione", id: "LIST" }] : [{ type: "Posizione", id: "LIST" }],
+        }),
+    }),
+});
+
+export const { useGetNearbyQuery } = posizioniApi;

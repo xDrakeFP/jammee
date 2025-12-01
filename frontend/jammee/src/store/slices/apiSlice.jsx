@@ -13,6 +13,6 @@ export const apiSlice = createApi({
             return headers;
         },
     }),
-    tagTypes: ["Utente", "Musicista", "Strumento", "JamSession", "Genere", "Messaggio", "Feedback", "Auth", "Competenza", "Dimestichezza"],
+    tagTypes: ["Utente", "Musicista", "Strumento", "JamSession", "Genere", "Messaggio", "Feedback", "Auth", "Competenza", "Dimestichezza", "Posizione"],
     endpoints: () => ({}),
 });

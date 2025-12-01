@@ -39,15 +39,17 @@ public class PosizioneController {
         return this.service.getAll(pageNumber,pageSize,sortBy);
     }
 
-    @GetMapping("/nearby")
+    @GetMapping("/search")
     public Page<PosizioneConDistanzaDTO> getNearby(
             @RequestParam double lat,
             @RequestParam double lng,
             @RequestParam(defaultValue = "50") double maxKm,
             @RequestParam(defaultValue = "0") int pageNumber,
-            @RequestParam(defaultValue = "10") int pageSize
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) UUID strumentoId,   // <-- opzionale
+            @RequestParam(required = false) UUID genereId       // <-- opzionale
     ) {
-        return this.service.getNearby(lat, lng, maxKm, pageNumber, pageSize);
+        return this.service.getNearby(lat, lng, maxKm, pageNumber, pageSize, strumentoId, genereId);
     }
 
     @PostMapping("/me")
